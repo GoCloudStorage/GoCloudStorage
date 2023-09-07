@@ -34,7 +34,7 @@ type pg struct {
 type config struct {
 	CloudStorage service `mapstructure:"cloud_storage"`
 	LogLevel     string  `mapstructure:"log_level"`
-	Storage      storage `mapstructure:"storage"`
+	Storage      storage `mapstructure:"file"`
 	Pg           pg      `mapstructure:"pg"`
 }
 
@@ -45,7 +45,7 @@ var (
 
 func init() {
 	time.Local = time.UTC
-	flag.StringVar(&configFile, "c", "etc/config.yaml", "config file path")
+	flag.StringVar(&configFile, "c", "etc/config.yaml", "config storage path")
 }
 
 func InitConfig() {
@@ -53,7 +53,7 @@ func InitConfig() {
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
-		logrus.Panicf("failed to read config file, err: %v", err)
+		logrus.Panicf("failed to read config storage, err: %v", err)
 	}
 	if err := viper.Unmarshal(Cfg); err != nil {
 		logrus.Panicf("failed to unmarshal config, err: %v", err)

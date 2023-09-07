@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"github.com/GoCloudstorage/GoCloudstorage/opt"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/sirupsen/logrus"
 	"os/signal"
 	"syscall"
 	"time"
-	"work-space/opt"
-	"work-space/tools/db/pg"
 )
 
 func main() {
@@ -15,8 +15,8 @@ func main() {
 	defer cancel()
 	opt.InitConfig()
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.DBName, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.Port)
-	api.InitAPI(ctx)
+	//api.InitAPI(ctx)
 	<-ctx.Done()
-	logrus.Warnf("cloud storage service stop by ctx in 3s...")
+	logrus.Warnf("cloud file service stop by ctx in 3s...")
 	<-time.After(time.Second * 3)
 }

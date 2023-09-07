@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package file;
+
+option go_package="proto/file";
+
+service File {
+  rpc Upload(UploadReq) returns (UploadResp);
+}
+
+message UploadReq {
+  string token;
+
+}
+
+message UploadResp {
+
+}

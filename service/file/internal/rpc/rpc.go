@@ -22,7 +22,7 @@ func (s StorageServer) Upload(stream storage.Storage_UploadServer) error {
 	for {
 		chunk, err := stream.Recv()
 		if err == io.EOF {
-			panic("file read success, not upload minio")
+			panic("storage read success, not upload minio")
 		}
 		if err != nil {
 			return err
