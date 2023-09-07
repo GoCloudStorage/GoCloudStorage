@@ -1,0 +1,18 @@
+log-level: "debug"
+cloud_storage:
+    name: "cloud-storage"
+    host: "0.0.0.0"
+    port: 8000
+storage:
+    type: "minio"
+    endpoint: "162.14.115.114:9000"
+    access_key_id: "cill"
+    secret_access_key: "12345678"
+    use_ssl: false
+    bucket_name: "test-bucket"
+pg:
+    host: "162.14.115.114"
+    port: 5432
+    user: "cill"
+    password: "12345678"
+    db_name: "test"

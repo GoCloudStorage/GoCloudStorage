@@ -1,0 +1,20 @@
+syntax="proto3";
+
+package storage;
+
+option go_package = "proto/storage";
+
+message UploadReq {
+  string FileName = 1;
+  string Ext = 2;
+  int32 AccessPermission = 3;
+  bytes File = 4;
+}
+
+message UploadResp {
+  bool isSuccess = 1;
+}
+
+service Storage {
+  rpc Upload(stream UploadReq) returns (UploadResp);
+}
