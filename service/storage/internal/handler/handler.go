@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/gofiber/fiber/v2"
-	"work-space/pkg/token"
 )
 
 func PreUpload(ctx *fiber.Ctx) error {

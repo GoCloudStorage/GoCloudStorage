@@ -1,10 +1,26 @@
 package main
 
-import "net/http"
+import (
+	"context"
+	"github.com/GoCloudstorage/GoCloudstorage/opt"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
+	"github.com/GoCloudstorage/GoCloudstorage/service/file/internal/api"
+	"github.com/GoCloudstorage/GoCloudstorage/service/file/model"
+	"github.com/sirupsen/logrus"
+	"os/signal"
+	"syscall"
+	"time"
+)
 
 func main() {
-	http.HandleFunc("/upload", func(writer http.ResponseWriter, request *http.Request) {
-		// 验证token, 并确定上传分块
-		// 上传
-	})
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	defer cancel()
+
+	opt.InitConfig()
+	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
+	model.Init()
+	api.InitAPI(ctx)
+	<-ctx.Done()
+	logrus.Warnf("cloud storage service stop by ctx in 3s...")
+	<-time.After(time.Second * 3)
 }

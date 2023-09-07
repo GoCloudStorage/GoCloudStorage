@@ -1,4 +1,4 @@
-module github.com/GoCloudStorage/GoCloudstorage
+module github.com/GoCloudstorage/GoCloudstorage
 
 go 1.20
 

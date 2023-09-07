@@ -1,8 +1,8 @@
 package model
 
 import (
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"gorm.io/gorm"
-	"work-space/tools/db/pg"
 )
 
 type FileInfo struct {
@@ -20,6 +20,6 @@ func (f *FileInfo) FindOneByHash() error {
 	return pg.Client.Model(f).Where("hash = ?", f.Hash).First(&f).Error
 }
 
-func Migreate() {
+func Init() {
 	pg.Client.AutoMigrate(&FileInfo{})
 }

@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"github.com/GoCloudstorage/GoCloudstorage/opt"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/sirupsen/logrus"
 	"os/signal"
 	"syscall"
 	"time"
-	"work-space/opt"
-	"work-space/tools/db/pg"
 )
 
 func main() {
