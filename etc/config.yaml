@@ -1,6 +1,6 @@
 log-level: "debug"
 cloud_storage:
-    name: "cloud-storage"
+    name: "cloud-file"
     host: "0.0.0.0"
     port: 8000
 storage:

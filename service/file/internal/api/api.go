@@ -4,18 +4,18 @@ import (
 	"context"
 	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
+	"github.com/GoCloudstorage/GoCloudstorage/service/file/internal/handler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func registerAPI() *fiber.App {
 	app := fiber.New()
-	api := app.Group("/storage")
+	api := app.Group("/file")
 	{
-		api.Get("/", func(ctx *fiber.Ctx) error {
-			return ctx.SendStatus(http.StatusOK)
-		})
+		api.Post("/", handler.PreUpload)
+		api.Get("/", handler.GetAll)
+		api.Get("/:id", handler.PreDownload)
 	}
 	return app
 }
