@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.23.4
-// source: storage/storage.proto
+// source: file/file.proto
 
 package storage
 
@@ -13,13 +13,13 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
-// This is a compile-time assertion to ensure that this generated file
+// This is a compile-time assertion to ensure that this generated storage
 // is compatible with the grpc package it is being compiled against.
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Storage_Upload_FullMethodName = "/storage.Storage/Upload"
+	Storage_Upload_FullMethodName = "/file.Storage/Upload"
 )
 
 // StorageClient is the client API for Storage service.
@@ -129,7 +129,7 @@ func (x *storageUploadServer) Recv() (*UploadReq, error) {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Storage_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "storage.Storage",
+	ServiceName: "file.Storage",
 	HandlerType: (*StorageServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
@@ -139,5 +139,5 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
-	Metadata: "storage/storage.proto",
+	Metadata: "file/file.proto",
 }

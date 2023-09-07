@@ -3,7 +3,7 @@ package svc
 import (
 	"context"
 	"io"
-	"work-space/tools/storage/minio"
+	"work-space/pkg/storage/minio"
 )
 
 func Upload(bucketName, filename string, data io.Reader, size int64) error {

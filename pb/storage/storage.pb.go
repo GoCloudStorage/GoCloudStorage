@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.31.0
 // 	protoc        v4.23.4
-// source: storage/storage.proto
+// source: file/file.proto
 
 package storage
 
@@ -175,12 +175,12 @@ func file_storage_storage_proto_rawDescGZIP() []byte {
 
 var file_storage_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_storage_storage_proto_goTypes = []interface{}{
-	(*UploadReq)(nil),  // 0: storage.UploadReq
-	(*UploadResp)(nil), // 1: storage.UploadResp
+	(*UploadReq)(nil),  // 0: file.UploadReq
+	(*UploadResp)(nil), // 1: file.UploadResp
 }
 var file_storage_storage_proto_depIdxs = []int32{
-	0, // 0: storage.Storage.Upload:input_type -> storage.UploadReq
-	1, // 1: storage.Storage.Upload:output_type -> storage.UploadResp
+	0, // 0: file.Storage.Upload:input_type -> file.UploadReq
+	1, // 1: file.Storage.Upload:output_type -> file.UploadResp
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
