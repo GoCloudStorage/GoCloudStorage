@@ -4,17 +4,19 @@ package storage;
 
 option go_package = "proto/storage";
 
-message UploadReq {
+message PreUploadReq {
   string FileName = 1;
   string Ext = 2;
   int32 AccessPermission = 3;
-  bytes File = 4;
+  string Path = 4;
 }
 
-message UploadResp {
-  bool isSuccess = 1;
+message PreUploadResp {
+  string token = 1;
+  string url = 2;
+
 }
 
 service Storage {
-  rpc Upload(stream UploadReq) returns (UploadResp);
+  rpc PreUpload(PreUploadReq) returns (PreUploadResp);
 }

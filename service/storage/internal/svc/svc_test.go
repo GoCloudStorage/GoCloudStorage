@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 	"work-space/opt"
-	"work-space/tools/storage/minio"
+	"work-space/pkg/storage/minio"
 )
 
 func TestUploadFile(t *testing.T) {

@@ -13,9 +13,9 @@ func registerAPI() *fiber.App {
 	app := fiber.New()
 	api := app.Group("/storage")
 	{
-		api.Post("/", handler.Upload)
+		api.Post("/", handler.PreUpload)
 		api.Get("/", handler.GetAll)
-		api.Get("/:id", handler.Download)
+		api.Get("/:id", handler.PreDownload)
 
 	}
 	return app

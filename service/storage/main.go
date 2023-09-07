@@ -7,10 +7,10 @@ import (
 	"syscall"
 	"time"
 	"work-space/opt"
+	"work-space/pkg/storage/minio"
 	"work-space/service/storage/internal/api"
 	"work-space/service/storage/internal/model"
 	"work-space/tools/db/pg"
-	"work-space/tools/storage/minio"
 )
 
 func main() {
