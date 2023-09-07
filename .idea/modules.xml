@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/work-space.iml" filepath="$PROJECT_DIR$/.idea/work-space.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/GoCloudStorage.iml" filepath="$PROJECT_DIR$/.idea/GoCloudStorage.iml" />
     </modules>
   </component>
 </project>
