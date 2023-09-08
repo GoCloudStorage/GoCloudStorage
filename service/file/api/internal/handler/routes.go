@@ -1,10 +1,9 @@
-package api
+package handler
 
 import (
 	"context"
 	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
-	"github.com/GoCloudstorage/GoCloudstorage/service/file/internal/handler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
@@ -13,9 +12,9 @@ func registerAPI() *fiber.App {
 	app := fiber.New()
 	api := app.Group("/file")
 	{
-		api.Post("/", handler.PreUpload)
-		api.Get("/", handler.GetAll)
-		api.Get("/:id", handler.PreDownload)
+		api.Post("/", preUpload)
+		api.Get("/", GetAll)
+		api.Get("/:id", PreDownload)
 	}
 	return app
 }

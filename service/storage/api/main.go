@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
-	"github.com/GoCloudstorage/GoCloudstorage/service/storage/internal/api"
+	"github.com/GoCloudstorage/GoCloudstorage/service/storage/api/internal/handler"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
 	"github.com/sirupsen/logrus"
 	"os/signal"
