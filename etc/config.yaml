@@ -16,3 +16,6 @@ pg:
     user: "cill"
     password: "12345678"
     db_name: "test"
+
+file:
+    block_size: 5*1024*1024

@@ -31,11 +31,16 @@ type pg struct {
 	DBName   string `mapstructure:"db_name"`
 }
 
+type file struct {
+	BlockSize int `mapstructure:"block_size"`
+}
+
 type config struct {
 	CloudStorage service `mapstructure:"cloud_storage"`
 	LogLevel     string  `mapstructure:"log_level"`
 	Storage      storage `mapstructure:"file"`
 	Pg           pg      `mapstructure:"pg"`
+	File         file    `mapstructure:"file"`
 }
 
 var (
