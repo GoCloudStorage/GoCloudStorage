@@ -7,6 +7,7 @@ import (
 
 type StorageInfo struct {
 	gorm.Model
+	StorageId  int64  `json:"storage_id,omitempty"`
 	Hash       string `json:"hash,omitempty"`
 	BlockSize  int    `json:"block_size,omitempty"`
 	Size       int    `json:"size,omitempty"`        // 文件大小

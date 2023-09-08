@@ -3,8 +3,10 @@ module github.com/GoCloudstorage/GoCloudstorage
 go 1.20
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gofiber/fiber/v2 v2.49.1
 	github.com/sirupsen/logrus v1.9.3
+	github.com/sony/sonyflake v1.2.0
 	github.com/spf13/viper v1.16.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
