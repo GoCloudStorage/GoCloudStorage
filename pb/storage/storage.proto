@@ -2,7 +2,7 @@ syntax="proto3";
 
 package storage;
 
-option go_package = "proto/storage";
+option go_package = "pb/storage";
 
 message CreateStorageReq {
   string token = 1;
@@ -11,8 +11,22 @@ message CreateStorageReq {
 
 message CreateStorageResp {
   int64 StorageId = 1;
+  bool  IsComplete=2;
+}
+
+message FindStorageByHashReq{
+  string hash=1;
+}
+
+message FindStorageByHashResp{
+  int64 StorageId = 1;
+  int32 Size=2;
+  bool  IsComplete=3;
+  string RealPath=4;
 }
 
 service Storage {
+  rpc FindStorageByHash(FindStorageByHashReq)returns(FindStorageByHashResp);
   rpc CreateStorage(CreateStorageReq) returns (CreateStorageResp);
 }
+

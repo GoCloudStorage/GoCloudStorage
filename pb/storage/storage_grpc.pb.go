@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageClient interface {
+	FindStorageByHash(ctx context.Context, in *FindStorageByHashReq, opts ...grpc.CallOption) (*FindStorageByHashResp, error)
 	CreateStorage(ctx context.Context, in *CreateStorageReq, opts ...grpc.CallOption) (*CreateStorageResp, error)
 }
 
@@ -31,6 +32,15 @@ type storageClient struct {
 
 func NewStorageClient(cc grpc.ClientConnInterface) StorageClient {
 	return &storageClient{cc}
+}
+
+func (c *storageClient) FindStorageByHash(ctx context.Context, in *FindStorageByHashReq, opts ...grpc.CallOption) (*FindStorageByHashResp, error) {
+	out := new(FindStorageByHashResp)
+	err := c.cc.Invoke(ctx, "/storage.Storage/FindStorageByHash", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *storageClient) CreateStorage(ctx context.Context, in *CreateStorageReq, opts ...grpc.CallOption) (*CreateStorageResp, error) {
@@ -46,6 +56,7 @@ func (c *storageClient) CreateStorage(ctx context.Context, in *CreateStorageReq,
 // All implementations must embed UnimplementedStorageServer
 // for forward compatibility
 type StorageServer interface {
+	FindStorageByHash(context.Context, *FindStorageByHashReq) (*FindStorageByHashResp, error)
 	CreateStorage(context.Context, *CreateStorageReq) (*CreateStorageResp, error)
 	mustEmbedUnimplementedStorageServer()
 }
@@ -54,6 +65,9 @@ type StorageServer interface {
 type UnimplementedStorageServer struct {
 }
 
+func (UnimplementedStorageServer) FindStorageByHash(context.Context, *FindStorageByHashReq) (*FindStorageByHashResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindStorageByHash not implemented")
+}
 func (UnimplementedStorageServer) CreateStorage(context.Context, *CreateStorageReq) (*CreateStorageResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateStorage not implemented")
 }
@@ -68,6 +82,24 @@ type UnsafeStorageServer interface {
 
 func RegisterStorageServer(s grpc.ServiceRegistrar, srv StorageServer) {
 	s.RegisterService(&Storage_ServiceDesc, srv)
+}
+
+func _Storage_FindStorageByHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindStorageByHashReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).FindStorageByHash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/storage.Storage/FindStorageByHash",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).FindStorageByHash(ctx, req.(*FindStorageByHashReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Storage_CreateStorage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -95,6 +127,10 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "storage.Storage",
 	HandlerType: (*StorageServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "FindStorageByHash",
+			Handler:    _Storage_FindStorageByHash_Handler,
+		},
 		{
 			MethodName: "CreateStorage",
 			Handler:    _Storage_CreateStorage_Handler,
