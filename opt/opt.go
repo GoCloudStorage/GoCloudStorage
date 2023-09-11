@@ -35,12 +35,19 @@ type file struct {
 	BlockSize int `mapstructure:"block_size"`
 }
 
+type redis struct {
+	Addr     string `mapstructure:"addr"`
+	Password string `mapstructure:"password"`
+	DB       int    `mapstructure:"db"`
+}
+
 type config struct {
 	CloudStorage service `mapstructure:"cloud_storage"`
 	LogLevel     string  `mapstructure:"log_level"`
 	Storage      storage `mapstructure:"file"`
 	Pg           pg      `mapstructure:"pg"`
 	File         file    `mapstructure:"file"`
+	Redis        redis   `mapstructure:"redis"`
 }
 
 var (

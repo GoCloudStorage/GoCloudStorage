@@ -75,3 +75,7 @@ func saveFile(filepath string, data io.Reader) error {
 
 	return nil
 }
+
+func removeDir(dirPath string) {
+	_ = os.RemoveAll(dirPath)
+}

@@ -23,9 +23,11 @@ func (receiver chunkUploader) saveChunk(fileDir string, partNum int, data io.Rea
 func (receiver chunkUploader) mergeChunk(fileDir string, partSize int, totalSize int) error {
 	dirs, err := os.ReadDir(fileDir)
 	if err != nil {
+		removeDir(fileDir)
 		return fmt.Errorf("failed to read dir [%s], err: %v", fileDir, err)
 	}
 	if len(dirs) != partSize {
+		removeDir(fileDir)
 		return fmt.Errorf("file chunk not complete, need %d have %d", partSize, len(dirs))
 	}
 	sort.Slice(dirs, func(i, j int) bool {
@@ -44,7 +46,7 @@ func (receiver chunkUploader) mergeChunk(fileDir string, partSize int, totalSize
 	}
 
 	if totalSize != 0 {
-		os.Remove(finalFilePath)
+		removeDir(fileDir)
 		return fmt.Errorf("merge chunk not complete, %d", totalSize)
 	}
 
