@@ -11,7 +11,6 @@ message CreateStorageReq {
 
 message CreateStorageResp {
   int64 StorageId = 1;
-  bool  IsComplete=2;
 }
 
 message FindStorageByHashReq{
