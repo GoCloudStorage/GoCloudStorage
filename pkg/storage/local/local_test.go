@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage"
 	"testing"
+	"time"
 )
 
 func TestStorageEngineUpload(t *testing.T) {
@@ -46,4 +47,16 @@ func TestStorageEngineUpload(t *testing.T) {
 	if err != nil {
 		t.Fatal("failed to merge chunk", err)
 	}
+}
+
+func TestLocalStorageEngineGetURL(t *testing.T) {
+	var s StorageEngine
+	s.Init(storage.InitConfig{
+		Endpoint:        "./",
+		AccessKeyID:     "",
+		SecretAccessKey: "",
+		UseSSL:          false,
+		BucketName:      "test",
+	})
+	s.GetObjectURL("test-key", "123456", time.Second*150)
 }

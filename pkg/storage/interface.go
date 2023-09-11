@@ -9,7 +9,7 @@ type IStorage interface {
 	Init(InitConfig)
 	UploadChunk(request UploadChunkRequest) error
 	MergeChunk(fileMD5 string, partSize int, dataSize int) error
-	GetObjectURL(fileMD5 string, expire time.Duration) string
+	GetObjectURL(key, fileMD5 string, expire time.Duration) string
 }
 
 type UploadChunkRequest struct {
