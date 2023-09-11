@@ -1,0 +1,37 @@
+syntax = "proto3";
+option go_package= "./user";
+package pb;
+
+message RegisterRequest{
+  string UserName = 1;
+  string Password = 2;
+  string Email = 3;
+  string Photo = 4;
+  string PhoneNumber = 5;
+}
+
+message RegisterResponse{
+  // @inject_tag: json:"code" form:"code"" uri:"code""
+  int64 Code=1;
+  // @inject_tag: json:"msg" form:"msg"" uri:"msg""
+  string Msg=2;
+  // @inject_tag: json:"data" form:"data"" uri:"data""
+  string Data=3;
+}
+
+message LoginRequest{
+  string UserName = 1;
+  string Password = 2;
+}
+
+message UserDetailResponse{
+  // @inject_tag: json:"user_response" form:"user_response" uri:"user_response"
+  RegisterResponse UserDetail=1;
+  // @inject_tag: json:"code" form:"code"" uri:"code""
+  int64 Code=2;
+}
+
+service UserService{
+  rpc UserLogin(LoginRequest) returns(UserDetailResponse);
+  rpc UserRegister(RegisterRequest) returns(RegisterResponse);
+}
