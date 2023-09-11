@@ -19,3 +19,8 @@ pg:
 
 file:
     block_size: 5*1024*1024
+
+redis:
+    addr: "162.14.115.114:6379"
+    password: "12345678"
+    db: 0
