@@ -28,11 +28,12 @@ func (s *StorageEngine) getFileDir(fileMD5 string) string {
 	return path.Join(s.rootPath, fileMD5)
 }
 
-func (s *StorageEngine) GetObjectURL(fileMD5 string, expire time.Duration) string {
+// GetObjectURL 获取文件存储位置
+func (s *StorageEngine) GetObjectURL(key, fileMD5 string, expire time.Duration) string {
 	filePath := path.Join(s.getFileDir(fileMD5), "data")
-	cmd := redis.Client.Get(context.Background(), fileMD5)
+	cmd := redis.Client.Get(context.Background(), key)
 	if cmd.Err() == redis2.Nil {
-		redis.Client.SetEx(context.Background(), fileMD5, filePath, expire)
+		redis.Client.SetEx(context.Background(), key, filePath, expire)
 	} else if cmd.Err() != nil {
 		return "Err"
 	}
