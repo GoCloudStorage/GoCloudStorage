@@ -2,19 +2,35 @@ syntax = "proto3";
 
 package file;
 
-option go_package="proto/file";
+option go_package="pb/file";
 
 service File {
+  rpc FindFileByUserIdAndFileInfo(FindFileByUserIdAndFileInfoReq)returns(FindFileByUserIdAndFileInfoResp);
   rpc CreateFile(CreateFileReq) returns (CreateFileResp);
 }
 
+message FindFileByUserIdAndFileInfoReq{
+  int64  UserId=1;
+  string Path=2;
+  string FileName=3;
+  string Ext=4;
+}
+
+message FindFileByUserIdAndFileInfoResp{
+  string Hash=1;
+}
+
 message CreateFileReq {
-  string fileName=1;
-  string path=2;
-
-
+  int64  UserId=1;
+  string Path=2;
+  string FileName=3;
+  string Ext=4;
+  string Hash=5;
+  string Size=6;
+  int32 BlockSize=7;
+  int64 StorageId=8;
 }
 
 message CreateFileResp {
-  string
+  int32 FileId=1;
 }
