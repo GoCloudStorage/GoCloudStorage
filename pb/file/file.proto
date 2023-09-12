@@ -18,6 +18,7 @@ message FindFileByUserIdAndFileInfoReq{
 
 message FindFileByUserIdAndFileInfoResp{
   string Hash=1;
+  int64 StorageId=2;
 }
 
 message CreateFileReq {
@@ -26,7 +27,7 @@ message CreateFileReq {
   string FileName=3;
   string Ext=4;
   string Hash=5;
-  string Size=6;
+  int32 Size=6;
   int32 BlockSize=7;
   int64 StorageId=8;
 }
