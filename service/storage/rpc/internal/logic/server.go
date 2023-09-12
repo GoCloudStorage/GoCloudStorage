@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/snowflake"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
@@ -15,7 +16,7 @@ type storageServer struct {
 }
 
 func (s *storageServer) CreateStorage(ctx context.Context, in *storage.CreateStorageReq) (*storage.CreateStorageResp, error) {
-	parseToken, err := token.ParseToken(in.Token)
+	parseToken, err := token.ParseUploadToken(in.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -41,6 +42,10 @@ func (s *storageServer) CreateStorage(ctx context.Context, in *storage.CreateSto
 		if err != nil {
 			return nil, err
 		}
-	}
 
+		return &storage.CreateStorageResp{
+			StorageId: si.StorageId,
+		}, nil
+	}
+	return nil, errors.New(response.PARAM_ERROR)
 }

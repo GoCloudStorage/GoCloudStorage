@@ -15,7 +15,7 @@ type UploadToken struct {
 	jwt.StandardClaims
 }
 
-func GenerateToken(hash string, partNum int, size int) (string, error) {
+func GenerateUploadToken(hash string, partNum int, size int) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(expireTime)
 	issuer := issuer
@@ -33,7 +33,7 @@ func GenerateToken(hash string, partNum int, size int) (string, error) {
 	return token, err
 }
 
-func ParseToken(token string) (*UploadToken, error) {
+func ParseUploadToken(token string) (*UploadToken, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &UploadToken{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte("golang"), nil
 	})

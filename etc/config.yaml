@@ -24,3 +24,7 @@ redis:
     addr: "162.14.115.114:6379"
     password: "12345678"
     db: 0
+
+storageRPC:
+    domain: "storageRPC"
+    endpoints: "127.0.0.1"

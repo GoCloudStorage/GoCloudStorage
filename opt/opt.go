@@ -41,13 +41,19 @@ type redis struct {
 	DB       int    `mapstructure:"db"`
 }
 
+type storageRPC struct {
+	Domain    string   `mapstructure:"domain"`
+	Endpoints []string `mapstructure:"endpoints"`
+}
+
 type config struct {
-	CloudStorage service `mapstructure:"cloud_storage"`
-	LogLevel     string  `mapstructure:"log_level"`
-	Storage      storage `mapstructure:"file"`
-	Pg           pg      `mapstructure:"pg"`
-	File         file    `mapstructure:"file"`
-	Redis        redis   `mapstructure:"redis"`
+	CloudStorage service    `mapstructure:"cloud_storage"`
+	LogLevel     string     `mapstructure:"log_level"`
+	Storage      storage    `mapstructure:"file"`
+	Pg           pg         `mapstructure:"pg"`
+	File         file       `mapstructure:"file"`
+	Redis        redis      `mapstructure:"redis"`
+	StorageRPC   storageRPC `mapstructure:"storageRPC"`
 }
 
 var (

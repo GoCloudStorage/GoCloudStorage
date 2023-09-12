@@ -12,7 +12,7 @@ type FileInfo struct {
 	Size       int64  `json:"size,omitempty"`
 	BlockSize  int64  `json:"blockSize"`
 	Ext        string `json:"ext,omitempty"`
-	UploaderId int64  `json:"uploader,omitempty"`
+	UploaderId uint   `json:"uploader,omitempty"`
 	Hash       string `json:"hash,omitempty"`
 	StorageId  int64  `json:"storage_id,omitempty"`
 }
