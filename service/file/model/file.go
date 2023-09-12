@@ -15,10 +15,15 @@ type FileInfo struct {
 	UploaderId uint   `json:"uploader,omitempty"`
 	Hash       string `json:"hash,omitempty"`
 	StorageId  int64  `json:"storage_id,omitempty"`
+	IsPrivate  bool   `json:"is_private"`
 }
 
 func (f *FileInfo) FindOneByHash() error {
 	return pg.Client.Model(f).Where("hash = ?", f.Hash).First(&f).Error
+}
+
+func (f *FileInfo) FindOneByID(id int) error {
+	return pg.Client.Model(f).Where("id = ?", f.ID).First(&f).Error
 }
 
 func Init() {

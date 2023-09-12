@@ -29,13 +29,13 @@ func GenerateUploadToken(hash string, partNum int, size int) (string, error) {
 		},
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte("golang"))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey))
 	return token, err
 }
 
 func ParseUploadToken(token string) (*UploadToken, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &UploadToken{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("golang"), nil
+		return []byte(secretKey), nil
 	})
 	if err != nil {
 		return nil, err

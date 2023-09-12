@@ -1,9 +1,27 @@
 package storage
 
 import (
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage/local"
 	"io"
 	"time"
 )
+
+var Client IStorage
+
+func InitClient(t string, endpoint, accessKeyID, secretAccessKey, bucketName string, useSSL bool) {
+	switch t {
+	case "local":
+		Client = new(local.StorageEngine)
+	}
+
+	Client.Init(InitConfig{
+		Endpoint:        "",
+		AccessKeyID:     "",
+		SecretAccessKey: "",
+		UseSSL:          false,
+		BucketName:      "",
+	})
+}
 
 type IStorage interface {
 	Init(InitConfig)

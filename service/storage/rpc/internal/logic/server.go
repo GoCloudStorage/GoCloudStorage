@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
-	"github.com/GoCloudstorage/GoCloudstorage/pkg/snowflake"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
 	"gorm.io/gorm"
@@ -30,13 +29,6 @@ func (s *storageServer) CreateStorage(ctx context.Context, in *storage.CreateSto
 
 	//创建新存储
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		//雪花算法生成ID
-		id, err := snowflake.GetID()
-		if err != nil {
-			return nil, err
-		}
-
-		si.StorageId = int64(id)
 		si.Hash = parseToken.Hash
 		err = si.CreateStorage()
 		if err != nil {
@@ -44,7 +36,7 @@ func (s *storageServer) CreateStorage(ctx context.Context, in *storage.CreateSto
 		}
 
 		return &storage.CreateStorageResp{
-			StorageId: si.StorageId,
+			StorageId: int64(si.StorageId),
 		}, nil
 	}
 	return nil, errors.New(response.PARAM_ERROR)
