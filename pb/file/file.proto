@@ -5,16 +5,16 @@ package file;
 option go_package="proto/file";
 
 service File {
-  rpc PreUpload(PreUploadReq) returns (UploadResp);
+  rpc CreateFile(CreateFileReq) returns (CreateFileResp);
 }
 
-message PreUploadReq {
+message CreateFileReq {
   string fileName=1;
   string path=2;
 
 
 }
 
-message UploadResp {
-
+message CreateFileResp {
+  string
 }
