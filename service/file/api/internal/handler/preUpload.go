@@ -7,12 +7,11 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
-	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
 
-func preUpload(ctx *fiber.Ctx) error {
+func (a *API) preUpload(ctx *fiber.Ctx) error {
 	type preUploadReq struct {
 		UploaderId int64  `json:"uploader,omitempty" form:"uploader"`
 		FileName   string `json:"file_name,omitempty" form:"file_name" `
@@ -33,6 +32,7 @@ func preUpload(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	//验参
 	num := p.Size/opt.Cfg.File.BlockSize + 1
 	token, err := token.GenerateUploadToken(p.Hash, num, p.Size)
 	if err != nil {
@@ -40,14 +40,8 @@ func preUpload(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	//验参
-	fileClient, err := xrpc.InitRPCClient(file.NewFileClient)
-	if err != nil {
-		logrus.Error("InitRPCClient err", err)
-		return err
-	}
 	//查询文件是否存在
-	info, err := fileClient.NewSession().FindFileByUserIdAndFileInfo(context.Background(), &file.FindFileByUserIdAndFileInfoReq{
+	info, err := a.fileRPCClient.FindFileByUserIdAndFileInfo(context.Background(), &file.FindFileByUserIdAndFileInfoReq{
 		UserId:   p.UploaderId,
 		Path:     p.Path,
 		FileName: p.FileName,
@@ -69,13 +63,8 @@ func preUpload(ctx *fiber.Ctx) error {
 
 	//该用户未存在该文件，查看存储桶是否有通用的该数据
 	//查询是否存在该存储
-	storageClient, err := xrpc.InitRPCClient(storage.NewStorageClient)
-	if err != nil {
-		logrus.Error("InitRPCClient err:", err)
-		return err
-	}
 
-	findStorageResp, err := storageClient.NewSession().FindStorageByHash(context.Background(), &storage.FindStorageByHashReq{Hash: p.Hash})
+	findStorageResp, err := a.storageRPCClient.FindStorageByHash(context.Background(), &storage.FindStorageByHashReq{Hash: p.Hash})
 	if err != nil {
 		logrus.Error("FindStorageByHash err:", err)
 		return err
@@ -83,14 +72,14 @@ func preUpload(ctx *fiber.Ctx) error {
 
 	//未存在该存储，新建存储
 	if findStorageResp == nil {
-		createStorageResp, err := storageClient.NewSession().CreateStorage(context.Background(), &storage.CreateStorageReq{Token: token})
+		createStorageResp, err := a.storageRPCClient.CreateStorage(context.Background(), &storage.CreateStorageReq{Token: token})
 		if err != nil {
 			logrus.Error("CreateStorage err:", err)
 			return err
 		}
 
 		//新建用户文件信息
-		_, err = fileClient.NewSession().CreateFile(context.Background(), &file.CreateFileReq{
+		_, err = a.fileRPCClient.CreateFile(context.Background(), &file.CreateFileReq{
 			UserId:    p.UploaderId,
 			Path:      p.Path,
 			FileName:  p.FileName,

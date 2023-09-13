@@ -28,3 +28,7 @@ redis:
 storageRPC:
     domain: "storageRPC"
     endpoints: "127.0.0.1:8001"
+
+fileRPC:
+    domain: "fileRPC"
+    endpoints: "127.0.0.1:8002"

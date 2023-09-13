@@ -41,7 +41,7 @@ func (a *API) preDownload(c *fiber.Ctx) error {
 		Hash:   fileInfo.Hash,
 		Expire: int64(time.Hour * 12),
 	}
-	resp, err := a.storageRPC.GenerateDownloadURL(context.Background(), &req)
+	resp, err := a.storageRPCClient.GenerateDownloadURL(context.Background(), &req)
 	if err != nil {
 		return response.Resp500(c, nil)
 	}

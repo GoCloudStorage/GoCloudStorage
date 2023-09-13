@@ -17,6 +17,7 @@ func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*f
 	if in == nil {
 		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
+
 	f := &model.FileInfo{
 		FileName:   in.FileName,
 		Path:       in.Path,
@@ -29,11 +30,13 @@ func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*f
 		IsPrivate:  false,
 	}
 	err := f.Create()
+
 	if err != nil {
 		logrus.Error("CreateFile err:", err)
 		return nil, errors.New(response.RPC_DB_ERROR)
 	}
-	return nil, nil
+
+	return &file.CreateFileResp{}, nil
 }
 
 func (s *FileServer) FindFileByUserIdAndFileInfo(ctx context.Context, in *file.FindFileByUserIdAndFileInfoReq) (*file.FindFileByUserIdAndFileInfoResp, error) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/file"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/gofiber/fiber/v2"
@@ -13,15 +14,16 @@ import (
 )
 
 type API struct {
-	storageRPC storage.StorageClient
+	storageRPCClient storage.StorageClient
+	fileRPCClient    file.FileClient
 }
 
 func (a *API) InitGrpc() {
 	// add storage rpc client
 	client, err := xrpc.GetGrpcClient(
 		xrpc.Config{
-			Domain:          "storage",
-			Endpoints:       []string{"localhost:8001"},
+			Domain:          opt.Cfg.StorageRPC.Domain,
+			Endpoints:       opt.Cfg.StorageRPC.Endpoints,
 			BackoffInterval: 0,
 			MaxAttempts:     0,
 		},
@@ -32,8 +34,24 @@ func (a *API) InitGrpc() {
 	if err != nil {
 		panic(err)
 	}
-	a.storageRPC = client.NewSession()
+	a.storageRPCClient = client.NewSession()
 
+	// add file rpc client
+	fileClient, err := xrpc.GetGrpcClient(
+		xrpc.Config{
+			Domain:          opt.Cfg.FileRPC.Domain,
+			Endpoints:       opt.Cfg.FileRPC.Endpoints,
+			BackoffInterval: 0,
+			MaxAttempts:     0,
+		},
+		file.NewFileClient,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
+	)
+	if err != nil {
+		panic(err)
+	}
+	a.fileRPCClient = fileClient.NewSession()
 }
 
 func (a *API) registerAPI() *fiber.App {
@@ -41,7 +59,7 @@ func (a *API) registerAPI() *fiber.App {
 
 	api := app.Group("/file")
 	{
-		api.Post("/", preUpload)
+		api.Post("/", a.preUpload)
 		//api.Get("/", GetAll)
 		api.Get("/:id", a.preDownload)
 	}
