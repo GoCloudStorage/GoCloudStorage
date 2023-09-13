@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/api/internal/handler"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
 	"github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ func main() {
 	defer cancel()
 	opt.InitConfig()
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
+	redis.Init(opt.Cfg.Redis.Addr, opt.Cfg.Redis.Password, opt.Cfg.Redis.DB)
 	model.Init()
 	api.InitAPI(ctx)
 	<-ctx.Done()

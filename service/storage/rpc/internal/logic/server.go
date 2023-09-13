@@ -67,11 +67,32 @@ func (s *StorageServer) FindStorageByHash(ctx context.Context, in *storage.FindS
 }
 
 func (s *StorageServer) GenerateDownloadURL(ctx context.Context, req *storage.GenerateDownloadURLReq) (*storage.GenerateDownloadURLResp, error) {
-	var key string
-	key = random.GenerateRandomString(16)
-	for redis.Client.Get(context.Background(), "storage:download:url"+key).Err() != redis2.Nil {
-		key = random.GenerateRandomString(16)
+	// 检查是否已经有该文件的url
+	cmd := redis.Client.Get(ctx, "storage:download:url:"+req.GetHash())
+	if cmd.Err() == redis2.Nil { // 没有该文件的下载url
+		// 找到没有使用过的code
+		var key string
+		key = random.GenerateRandomString(128)
+		for redis.Client.Get(ctx, "storage:download:code:"+key).Err() != redis2.Nil {
+			key = random.GenerateRandomString(128)
+		}
+		// 标记code 使用
+		redis.Client.SetEx(ctx, "storage:download:code:"+key, req.GetHash(), time.Duration(req.GetExpire()))
+
+		// 生成url
+		url, err := s.Engine.GenerateObjectURL(req.GetHash(), time.Duration(req.GetExpire()))
+		if err != nil {
+			return nil, err
+		}
+		res := redis.Client.SetEx(ctx, "storage:download:url:"+req.GetHash(), url, time.Duration(req.GetExpire()))
+		if res.Err() != nil {
+			return nil, res.Err()
+		}
+	} else if cmd.Err() != nil {
+		// 其他错误
+		return nil, cmd.Err()
 	}
-	s.Engine.GenerateObjectURL("storage:download:url"+key, req.Hash, time.Duration(req.Expire))
+	// generate url
+
 	return &storage.GenerateDownloadURLResp{URL: fmt.Sprintf("162.14.115.114:8000/storage/download/%s", key)}, nil
 }

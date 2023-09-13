@@ -6,7 +6,6 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage_engine"
 	redis2 "github.com/redis/go-redis/v9"
-	"log"
 	"path"
 	"time"
 )
@@ -30,16 +29,15 @@ func (s *StorageEngine) getFileDir(fileMD5 string) string {
 }
 
 // GenerateObjectURL 获取文件存储位置
-func (s *StorageEngine) GenerateObjectURL(key, fileMD5 string, expire time.Duration) string {
-	filePath := path.Join(s.getFileDir(fileMD5), "data")
+func (s *StorageEngine) GenerateObjectURL(key string, expire time.Duration) (string, error) {
+	filePath := path.Join(s.getFileDir(key), "data")
 	cmd := redis.Client.Get(context.Background(), key)
 	if cmd.Err() == redis2.Nil {
 		redis.Client.SetEx(context.Background(), key, filePath, expire)
 	} else if cmd.Err() != nil {
-		return "Err"
+		return "", fmt.Errorf("redis failed get key, err: %v", cmd.Err())
 	}
-	log.Println(cmd.Result())
-	return filePath
+	return filePath, nil
 }
 
 func (s *StorageEngine) Init(config storage_engine.InitConfig) {

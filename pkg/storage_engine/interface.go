@@ -11,7 +11,7 @@ type IStorage interface {
 	Init(InitConfig)
 	UploadChunk(request UploadChunkRequest) error
 	MergeChunk(fileMD5 string, partSize int, dataSize int) error
-	GenerateObjectURL(key, fileMD5 string, expire time.Duration) string
+	GenerateObjectURL(key string, expire time.Duration) (string, error)
 	GetObjectURL(key string) (string, error)
 }
 
