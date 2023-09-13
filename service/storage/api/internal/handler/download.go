@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Download(c *fiber.Ctx) error {
+func (a *API) download(c *fiber.Ctx) error {
 	// 解析token
 	tokenVal := c.FormValue("token")
 	downloadToken, err := token.ParseDownloadToken(tokenVal)
