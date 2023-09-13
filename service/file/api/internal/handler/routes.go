@@ -20,8 +20,8 @@ func (a *API) InitGrpc() {
 	// add storage rpc client
 	client, err := xrpc.GetGrpcClient(
 		xrpc.Config{
-			Domain:          "localhost:8001",
-			Endpoints:       nil,
+			Domain:          "storage",
+			Endpoints:       []string{"localhost:8001"},
 			BackoffInterval: 0,
 			MaxAttempts:     0,
 		},

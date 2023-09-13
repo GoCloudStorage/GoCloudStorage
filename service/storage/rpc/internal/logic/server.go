@@ -17,7 +17,7 @@ import (
 )
 
 type StorageServer struct {
-	engine storage_engine.IStorage
+	Engine storage_engine.IStorage
 	storage.UnimplementedStorageServer
 }
 
@@ -60,11 +60,6 @@ func (s *StorageServer) GenerateDownloadURL(ctx context.Context, req *storage.Ge
 	for redis.Client.Get(context.Background(), "storage:download:url"+key).Err() != redis2.Nil {
 		key = random.GenerateRandomString(16)
 	}
-	s.engine.GenerateObjectURL("storage:download:url"+key, req.Hash, time.Duration(req.Expire))
+	s.Engine.GenerateObjectURL("storage:download:url"+key, req.Hash, time.Duration(req.Expire))
 	return &storage.GenerateDownloadURLResp{URL: fmt.Sprintf("162.14.115.114:8000/storage/download/%s", key)}, nil
-}
-
-func (s *StorageServer) Init() {
-	//TODO implement me
-	panic("implement me")
 }

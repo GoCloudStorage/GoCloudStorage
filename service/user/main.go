@@ -14,7 +14,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer cancel()
 	opt.InitConfig()
-	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.DBName, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.Port)
+	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
 	//handler.InitAPI(ctx)
 	<-ctx.Done()
 	logrus.Warnf("cloud file service stop by ctx in 3s...")
