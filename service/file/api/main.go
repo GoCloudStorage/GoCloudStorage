@@ -5,7 +5,6 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/GoCloudstorage/GoCloudstorage/service/file/api/internal/handler"
-
 	"github.com/GoCloudstorage/GoCloudstorage/service/file/model"
 	"github.com/sirupsen/logrus"
 	"os/signal"

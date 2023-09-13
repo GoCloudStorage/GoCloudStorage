@@ -18,9 +18,12 @@ pg:
     db_name: "test"
 
 file:
-    block_size: 123
-
+    block_size: 5242880
 redis:
     addr: "162.14.115.114:6379"
     password: "12345678"
     db: 0
+
+storageRPC:
+    domain: "storageRPC"
+    endpoints: "127.0.0.1"

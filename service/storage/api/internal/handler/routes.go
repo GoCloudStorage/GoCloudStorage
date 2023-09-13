@@ -11,11 +11,12 @@ import (
 
 func registerAPI() *fiber.App {
 	app := fiber.New()
-	api := app.Group("/storage")
+	api := app.Group("/storage_engine")
 	{
 		api.Get("/", func(ctx *fiber.Ctx) error {
 			return ctx.SendStatus(http.StatusOK)
 		})
+		api.Get("/download/:downloadID", Download)
 	}
 	return app
 }

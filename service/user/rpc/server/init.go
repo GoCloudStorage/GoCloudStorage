@@ -1,4 +1,4 @@
-package rpc
+package server
 
 import (
 	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
@@ -8,13 +8,13 @@ import (
 )
 
 var UserClient user.UserServiceClient
+var Conn *grpc.ClientConn
 
 func ClientInit() {
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
-	defer conn.Close()
 
 	client := user.NewUserServiceClient(conn)
 

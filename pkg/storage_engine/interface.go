@@ -1,15 +1,18 @@
-package storage
+package storage_engine
 
 import (
 	"io"
 	"time"
 )
 
+var Client IStorage
+
 type IStorage interface {
 	Init(InitConfig)
 	UploadChunk(request UploadChunkRequest) error
 	MergeChunk(fileMD5 string, partSize int, dataSize int) error
-	GetObjectURL(key, fileMD5 string, expire time.Duration) string
+	GenerateObjectURL(key, fileMD5 string, expire time.Duration) string
+	GetObjectURL(key string) (string, error)
 }
 
 type UploadChunkRequest struct {

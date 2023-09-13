@@ -2,7 +2,7 @@ syntax="proto3";
 
 package storage;
 
-option go_package = "pb/storage";
+option go_package = "pb/storage_engine";
 
 message CreateStorageReq {
   string token = 1;
@@ -14,7 +14,7 @@ message CreateStorageResp {
 }
 
 message FindStorageByHashReq{
-  string hash=1;
+  string Hash=1;
 }
 
 message FindStorageByHashResp{
@@ -24,8 +24,18 @@ message FindStorageByHashResp{
   string RealPath=4;
 }
 
+message GenerateDownloadURLReq {
+  string Hash = 1;
+  int64 Expire = 2;
+}
+
+message GenerateDownloadURLResp {
+  string URL = 1;
+}
+
 service Storage {
   rpc FindStorageByHash(FindStorageByHashReq)returns(FindStorageByHashResp);
   rpc CreateStorage(CreateStorageReq) returns (CreateStorageResp);
+  rpc GenerateDownloadURL(GenerateDownloadURLReq) returns (GenerateDownloadURLResp);
 }
 

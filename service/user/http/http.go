@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
-	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc"
+	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/server"
+	"github.com/sirupsen/logrus"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,8 +17,9 @@ func UserRegister(ctx *fiber.Ctx) (err error) {
 		return response.Resp400(ctx, "绑定参数错误")
 	}
 
-	_, err = rpc.UserRegister(context.Background(), &req)
+	_, err = server.UserRegister(context.Background(), &req)
 	if err != nil {
+		logrus.Info(err)
 		return response.Resp500(ctx, "注册失败")
 	}
 
@@ -30,7 +33,7 @@ func UserLogin(ctx *fiber.Ctx) (err error) {
 		return response.Resp400(ctx, "绑定参数错误")
 	}
 
-	resp, err := rpc.UserLogin(context.Background(), &req)
+	resp, err := server.UserLogin(context.Background(), &req)
 	if err != nil {
 		return response.Resp500(ctx, "登陆失败")
 	}

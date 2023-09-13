@@ -7,8 +7,8 @@ import (
 	"errors"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
-	"github.com/GoCloudstorage/GoCloudstorage/service/user/internal/db/dao"
-	"github.com/GoCloudstorage/GoCloudstorage/service/user/internal/db/model"
+	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/internal/db/dao"
+	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/internal/db/model"
 	"sync"
 )
 

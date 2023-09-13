@@ -41,13 +41,19 @@ type redis struct {
 	DB       int    `mapstructure:"db"`
 }
 
+type storageRPC struct {
+	Domain    string   `mapstructure:"domain"`
+	Endpoints []string `mapstructure:"endpoints"`
+}
+
 type config struct {
-	CloudStorage service `mapstructure:"cloud_storage"`
-	LogLevel     string  `mapstructure:"log_level"`
-	Storage      storage `mapstructure:"file"`
-	Pg           pg      `mapstructure:"pg"`
-	File         file    `mapstructure:"file"`
-	Redis        redis   `mapstructure:"redis"`
+	CloudStorage service    `mapstructure:"cloud_storage"`
+	LogLevel     string     `mapstructure:"log_level"`
+	Storage      storage    `mapstructure:"file"`
+	Pg           pg         `mapstructure:"pg"`
+	File         file       `mapstructure:"file"`
+	Redis        redis      `mapstructure:"redis"`
+	StorageRPC   storageRPC `mapstructure:"storageRPC"`
 }
 
 var (
@@ -57,7 +63,7 @@ var (
 
 func init() {
 	time.Local = time.UTC
-	flag.StringVar(&configFile, "c", "etc/config.yaml", "config storage path")
+	flag.StringVar(&configFile, "c", "etc/config.yaml", "config storage_engine path")
 }
 
 func InitConfig() {
@@ -65,7 +71,7 @@ func InitConfig() {
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
-		logrus.Panicf("failed to read config storage, err: %v", err)
+		logrus.Panicf("failed to read config storage_engine, err: %v", err)
 	}
 	if err := viper.Unmarshal(Cfg); err != nil {
 		logrus.Panicf("failed to unmarshal config, err: %v", err)
