@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.23.4
-// source: storage/storage.proto
+// source: storage_engine/storage_engine.proto
 
 package storage
 
@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Storage_FindStorageByHash_FullMethodName   = "/storage.Storage/FindStorageByHash"
-	Storage_CreateStorage_FullMethodName       = "/storage.Storage/CreateStorage"
-	Storage_GenerateDownloadURL_FullMethodName = "/storage.Storage/GenerateDownloadURL"
+	Storage_FindStorageByHash_FullMethodName   = "/storage_engine.Storage/FindStorageByHash"
+	Storage_CreateStorage_FullMethodName       = "/storage_engine.Storage/CreateStorage"
+	Storage_GenerateDownloadURL_FullMethodName = "/storage_engine.Storage/GenerateDownloadURL"
 )
 
 // StorageClient is the client API for Storage service.
@@ -162,7 +162,7 @@ func _Storage_GenerateDownloadURL_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Storage_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "storage.Storage",
+	ServiceName: "storage_engine.Storage",
 	HandlerType: (*StorageServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -179,5 +179,5 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "storage/storage.proto",
+	Metadata: "storage_engine/storage_engine.proto",
 }

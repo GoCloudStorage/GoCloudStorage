@@ -2,7 +2,7 @@ syntax="proto3";
 
 package storage;
 
-option go_package = "pb/storage";
+option go_package = "pb/storage_engine";
 
 message CreateStorageReq {
   string token = 1;
