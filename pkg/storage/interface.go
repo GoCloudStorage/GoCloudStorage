@@ -1,21 +1,20 @@
 package storage
 
-import "io"
+import (
+	"io"
+	"time"
+)
 
 type IStorage interface {
-	Upload(request UploadRequest) error
-	GetTemporaryURL(fileMD5 string) string
-	GetPermanentURL(fileMD5 string) string
 	Init(InitConfig)
+	UploadChunk(request UploadChunkRequest) error
+	MergeChunk(fileMD5 string, partSize int, dataSize int) error
+	GetObjectURL(key, fileMD5 string, expire time.Duration) string
 }
 
-type UploadRequest struct {
-	BucketName string
-	Filename   string
-
-	Data io.Reader
-	Size int64 // data 大小, 单位字节
-
+type UploadChunkRequest struct {
+	FileMD5 string
+	Data    io.Reader
 	PartNum int // 分段上传: 块号, -1表示不是分段上传
 }
 

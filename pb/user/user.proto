@@ -11,24 +11,16 @@ message RegisterRequest{
 }
 
 message RegisterResponse{
-  // @inject_tag: json:"code" form:"code"" uri:"code""
-  int64 Code=1;
-  // @inject_tag: json:"msg" form:"msg"" uri:"msg""
-  string Msg=2;
-  // @inject_tag: json:"data" form:"data"" uri:"data""
-  string Data=3;
+  bool st = 1;
 }
 
 message LoginRequest{
-  string UserName = 1;
+  string PhoneNumber = 1;
   string Password = 2;
 }
 
 message UserDetailResponse{
-  // @inject_tag: json:"user_response" form:"user_response" uri:"user_response"
-  RegisterResponse UserDetail=1;
-  // @inject_tag: json:"code" form:"code"" uri:"code""
-  int64 Code=2;
+  string token = 1;
 }
 
 service UserService{

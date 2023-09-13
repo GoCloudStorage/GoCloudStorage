@@ -1,7 +1,7 @@
 package minio
 
 import (
-	"work-space/pkg/storage"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage"
 )
 
 type StorageEngine struct {
