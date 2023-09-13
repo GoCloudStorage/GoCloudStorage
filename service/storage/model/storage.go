@@ -30,11 +30,11 @@ func (s *StorageInfo) BeforeCreate(tx *gorm.DB) error {
 
 // FindStorageByHash 通过hash查找文件
 func (s *StorageInfo) FindStorageByHash(hash string) error {
-	tx := pg.Client.Where("hash=?", s.Hash).First(&s)
+	tx := pg.Client.Where("hash=?", s.Hash).First(s)
 	return tx.Error
 }
 
 // CreateStorage 创建存储
 func (s *StorageInfo) CreateStorage() error {
-	return pg.Client.Create(&s).Error
+	return pg.Client.Create(s).Error
 }

@@ -10,21 +10,41 @@ import (
 	"gorm.io/gorm"
 )
 
-type storageServer struct {
+type StorageServer struct {
 	storage.UnimplementedStorageServer
 }
 
-func (s *storageServer) CreateStorage(ctx context.Context, in *storage.CreateStorageReq) (*storage.CreateStorageResp, error) {
+func (s *StorageServer) FindStorageByHash(ctx context.Context, in *storage.FindStorageByHashReq) (*storage.FindStorageByHashResp, error) {
+	if in == nil {
+		return nil, errors.New(response.RPC_PARAM_ERROR)
+	}
+	si := new(model.StorageInfo)
+	err := si.FindStorageByHash(in.Hash)
+	if err != nil {
+		return nil, errors.New(response.RPC_DB_ERROR)
+	}
+	return &storage.FindStorageByHashResp{
+		StorageId:  int64(si.StorageId),
+		Size:       int32(si.Size),
+		IsComplete: si.IsComplete,
+		RealPath:   si.RealPath,
+	}, nil
+}
+
+func (s *StorageServer) CreateStorage(ctx context.Context, in *storage.CreateStorageReq) (*storage.CreateStorageResp, error) {
+	if in == nil {
+		return nil, errors.New(response.RPC_PARAM_ERROR)
+	}
 	parseToken, err := token.ParseUploadToken(in.Token)
 	if err != nil {
-		return nil, err
+		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
 	si := new(model.StorageInfo)
 	//验参
 	err = si.FindStorageByHash(parseToken.Hash)
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
 
 	//创建新存储
@@ -32,12 +52,12 @@ func (s *storageServer) CreateStorage(ctx context.Context, in *storage.CreateSto
 		si.Hash = parseToken.Hash
 		err = si.CreateStorage()
 		if err != nil {
-			return nil, err
+			return nil, errors.New(response.RPC_DB_ERROR)
 		}
 
 		return &storage.CreateStorageResp{
 			StorageId: int64(si.StorageId),
 		}, nil
 	}
-	return nil, errors.New(response.PARAM_ERROR)
+	return nil, errors.New(response.RPC_PARAM_ERROR)
 }
