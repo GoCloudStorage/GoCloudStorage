@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
-	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage_engine"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/api/internal/handler"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
 	"github.com/sirupsen/logrus"
@@ -19,7 +19,7 @@ func main() {
 	opt.InitConfig()
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
 	model.Init()
-	storage.InitClient(opt.Cfg.Storage.Type, opt.Cfg.Storage.Endpoint, opt.Cfg.Storage.AccessKeyID, opt.Cfg.Storage.SecretAccessKey, opt.Cfg.Storage.BucketName, opt.Cfg.Storage.UseSSL)
+	storage_engine.InitClient(opt.Cfg.Storage.Type, opt.Cfg.Storage.Endpoint, opt.Cfg.Storage.AccessKeyID, opt.Cfg.Storage.SecretAccessKey, opt.Cfg.Storage.BucketName, opt.Cfg.Storage.UseSSL)
 	api.InitAPI(ctx)
 	<-ctx.Done()
 	logrus.Warnf("cloud file service stop by ctx in 3s...")

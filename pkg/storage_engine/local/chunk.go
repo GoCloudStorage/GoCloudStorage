@@ -34,7 +34,7 @@ func (receiver chunkUploader) mergeChunk(fileDir string, partSize int, totalSize
 		return dirs[i].Name() < dirs[j].Name()
 	})
 
-	// create final storage file
+	// create final storage_engine file
 	finalFilePath := path.Join(fileDir, "data")
 	for i, part := range dirs {
 		srcPath := path.Join(fileDir, part.Name())

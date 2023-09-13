@@ -1,33 +1,18 @@
-package storage
+package storage_engine
 
 import (
-	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage/local"
 	"io"
 	"time"
 )
 
 var Client IStorage
 
-func InitClient(t string, endpoint, accessKeyID, secretAccessKey, bucketName string, useSSL bool) {
-	switch t {
-	case "local":
-		Client = new(local.StorageEngine)
-	}
-
-	Client.Init(InitConfig{
-		Endpoint:        "",
-		AccessKeyID:     "",
-		SecretAccessKey: "",
-		UseSSL:          false,
-		BucketName:      "",
-	})
-}
-
 type IStorage interface {
 	Init(InitConfig)
 	UploadChunk(request UploadChunkRequest) error
 	MergeChunk(fileMD5 string, partSize int, dataSize int) error
-	GetObjectURL(key, fileMD5 string, expire time.Duration) string
+	GenerateObjectURL(key, fileMD5 string, expire time.Duration) string
+	GetObjectURL(key string) (string, error)
 }
 
 type UploadChunkRequest struct {

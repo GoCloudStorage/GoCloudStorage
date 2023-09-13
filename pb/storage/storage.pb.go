@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.31.0
 // 	protoc        v4.23.4
-// source: storage/storage.proto
+// source: storage_engine/storage_engine.proto
 
 package storage
 
@@ -397,20 +397,20 @@ func file_storage_storage_proto_rawDescGZIP() []byte {
 
 var file_storage_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_storage_storage_proto_goTypes = []interface{}{
-	(*CreateStorageReq)(nil),        // 0: storage.CreateStorageReq
-	(*CreateStorageResp)(nil),       // 1: storage.CreateStorageResp
-	(*FindStorageByHashReq)(nil),    // 2: storage.FindStorageByHashReq
-	(*FindStorageByHashResp)(nil),   // 3: storage.FindStorageByHashResp
-	(*GenerateDownloadURLReq)(nil),  // 4: storage.GenerateDownloadURLReq
-	(*GenerateDownloadURLResp)(nil), // 5: storage.GenerateDownloadURLResp
+	(*CreateStorageReq)(nil),        // 0: storage_engine.CreateStorageReq
+	(*CreateStorageResp)(nil),       // 1: storage_engine.CreateStorageResp
+	(*FindStorageByHashReq)(nil),    // 2: storage_engine.FindStorageByHashReq
+	(*FindStorageByHashResp)(nil),   // 3: storage_engine.FindStorageByHashResp
+	(*GenerateDownloadURLReq)(nil),  // 4: storage_engine.GenerateDownloadURLReq
+	(*GenerateDownloadURLResp)(nil), // 5: storage_engine.GenerateDownloadURLResp
 }
 var file_storage_storage_proto_depIdxs = []int32{
-	2, // 0: storage.Storage.FindStorageByHash:input_type -> storage.FindStorageByHashReq
-	0, // 1: storage.Storage.CreateStorage:input_type -> storage.CreateStorageReq
-	4, // 2: storage.Storage.GenerateDownloadURL:input_type -> storage.GenerateDownloadURLReq
-	3, // 3: storage.Storage.FindStorageByHash:output_type -> storage.FindStorageByHashResp
-	1, // 4: storage.Storage.CreateStorage:output_type -> storage.CreateStorageResp
-	5, // 5: storage.Storage.GenerateDownloadURL:output_type -> storage.GenerateDownloadURLResp
+	2, // 0: storage_engine.Storage.FindStorageByHash:input_type -> storage_engine.FindStorageByHashReq
+	0, // 1: storage_engine.Storage.CreateStorage:input_type -> storage_engine.CreateStorageReq
+	4, // 2: storage_engine.Storage.GenerateDownloadURL:input_type -> storage_engine.GenerateDownloadURLReq
+	3, // 3: storage_engine.Storage.FindStorageByHash:output_type -> storage_engine.FindStorageByHashResp
+	1, // 4: storage_engine.Storage.CreateStorage:output_type -> storage_engine.CreateStorageResp
+	5, // 5: storage_engine.Storage.GenerateDownloadURL:output_type -> storage_engine.GenerateDownloadURLResp
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
