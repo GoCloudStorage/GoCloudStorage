@@ -4,12 +4,12 @@ cloud_storage:
     host: "0.0.0.0"
     port: 8000
 storage:
-    type: "minio"
-    endpoint: "162.14.115.114:9000"
+    type: "local"
+    endpoint: "/home/qiao/GolandProjects/GoCloudStorage/pkg/storage_engine/local"
     access_key_id: "cill"
     secret_access_key: "12345678"
     use_ssl: false
-    bucket_name: "test-bucket"
+    bucket_name: "test"
 pg:
     host: "162.14.115.114"
     port: 5432

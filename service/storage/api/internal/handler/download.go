@@ -1,13 +1,10 @@
 package handler
 
 import (
-	"context"
 	"fmt"
-	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/gofiber/fiber/v2"
-	redis2 "github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,13 +18,7 @@ func (a *API) download(c *fiber.Ctx) error {
 
 	// 获取文件路径
 	key := c.Params("key")
-	cmd := redis.Client.Get(context.Background(), "storage:download:url"+key)
-	if cmd.Err() == redis2.Nil {
-		return response.Resp400(c, nil, response.MSG404)
-	} else if cmd.Err() != nil {
-		logrus.Errorf("redis client error, err %v", cmd.Err())
-		return response.Resp500(c, nil)
-	}
+
 	filePath, err := cmd.Result()
 	if err != nil {
 		logrus.Errorf("failed to convert redis result, err: %v", err)

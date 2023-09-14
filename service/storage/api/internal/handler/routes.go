@@ -56,6 +56,7 @@ func InitAPI(ctx context.Context) {
 		addr = fmt.Sprintf("%s:%s", opt.Cfg.CloudStorage.Host, opt.Cfg.CloudStorage.Port)
 		app  = api.registerAPI()
 	)
+	api.InitGrpc()
 	go func() {
 		logrus.Infof("Start fiber webserver, addr: %s", addr)
 		if err := app.Listen(addr); err != nil {

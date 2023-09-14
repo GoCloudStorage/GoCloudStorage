@@ -22,6 +22,7 @@ const (
 	Storage_FindStorageByHash_FullMethodName   = "/storage.Storage/FindStorageByHash"
 	Storage_CreateStorage_FullMethodName       = "/storage.Storage/CreateStorage"
 	Storage_GenerateDownloadURL_FullMethodName = "/storage.Storage/GenerateDownloadURL"
+	Storage_GetRealPathByCode_FullMethodName   = "/storage.Storage/GetRealPathByCode"
 )
 
 // StorageClient is the client API for Storage service.
@@ -31,6 +32,7 @@ type StorageClient interface {
 	FindStorageByHash(ctx context.Context, in *FindStorageByHashReq, opts ...grpc.CallOption) (*FindStorageByHashResp, error)
 	CreateStorage(ctx context.Context, in *CreateStorageReq, opts ...grpc.CallOption) (*CreateStorageResp, error)
 	GenerateDownloadURL(ctx context.Context, in *GenerateDownloadURLReq, opts ...grpc.CallOption) (*GenerateDownloadURLResp, error)
+	GetRealPathByCode(ctx context.Context, in *GetRealPathByCodeReq, opts ...grpc.CallOption) (*GetRealPathByCodeResp, error)
 }
 
 type storageClient struct {
@@ -68,6 +70,15 @@ func (c *storageClient) GenerateDownloadURL(ctx context.Context, in *GenerateDow
 	return out, nil
 }
 
+func (c *storageClient) GetRealPathByCode(ctx context.Context, in *GetRealPathByCodeReq, opts ...grpc.CallOption) (*GetRealPathByCodeResp, error) {
+	out := new(GetRealPathByCodeResp)
+	err := c.cc.Invoke(ctx, Storage_GetRealPathByCode_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StorageServer is the server API for Storage service.
 // All implementations must embed UnimplementedStorageServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type StorageServer interface {
 	FindStorageByHash(context.Context, *FindStorageByHashReq) (*FindStorageByHashResp, error)
 	CreateStorage(context.Context, *CreateStorageReq) (*CreateStorageResp, error)
 	GenerateDownloadURL(context.Context, *GenerateDownloadURLReq) (*GenerateDownloadURLResp, error)
+	GetRealPathByCode(context.Context, *GetRealPathByCodeReq) (*GetRealPathByCodeResp, error)
 	mustEmbedUnimplementedStorageServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedStorageServer) CreateStorage(context.Context, *CreateStorageR
 }
 func (UnimplementedStorageServer) GenerateDownloadURL(context.Context, *GenerateDownloadURLReq) (*GenerateDownloadURLResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateDownloadURL not implemented")
+}
+func (UnimplementedStorageServer) GetRealPathByCode(context.Context, *GetRealPathByCodeReq) (*GetRealPathByCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRealPathByCode not implemented")
 }
 func (UnimplementedStorageServer) mustEmbedUnimplementedStorageServer() {}
 
@@ -158,6 +173,24 @@ func _Storage_GenerateDownloadURL_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Storage_GetRealPathByCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRealPathByCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).GetRealPathByCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Storage_GetRealPathByCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).GetRealPathByCode(ctx, req.(*GetRealPathByCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Storage_ServiceDesc is the grpc.ServiceDesc for Storage service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateDownloadURL",
 			Handler:    _Storage_GenerateDownloadURL_Handler,
+		},
+		{
+			MethodName: "GetRealPathByCode",
+			Handler:    _Storage_GetRealPathByCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

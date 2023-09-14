@@ -43,7 +43,7 @@ func (a *API) preDownload(c *fiber.Ctx) error {
 	}
 	resp, err := a.storageRPCClient.GenerateDownloadURL(context.Background(), &req)
 	if err != nil {
-		return response.Resp500(c, nil)
+		return response.Resp500(c, nil, err.Error())
 	}
 	url := resp.GetURL()
 

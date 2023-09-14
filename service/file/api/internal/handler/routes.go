@@ -59,8 +59,7 @@ func (a *API) registerAPI() *fiber.App {
 
 	api := app.Group("/file")
 	{
-		api.Post("/preUpload", a.preUpload)
-		api.Post("/upload", a.upload)
+		api.Post("/", a.preUpload)
 		//api.Get("/", GetAll)
 		api.Get("/:id", a.preDownload)
 	}

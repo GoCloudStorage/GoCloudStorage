@@ -55,7 +55,7 @@ type fileRPC struct {
 type config struct {
 	CloudStorage service    `mapstructure:"cloud_storage"`
 	LogLevel     string     `mapstructure:"log_level"`
-	Storage      storage    `mapstructure:"file"`
+	Storage      storage    `mapstructure:"storage"`
 	Pg           pg         `mapstructure:"pg"`
 	File         file       `mapstructure:"file"`
 	Redis        redis      `mapstructure:"redis"`

@@ -76,6 +76,14 @@ func saveFile(filepath string, data io.Reader) error {
 	return nil
 }
 
+func isExist(filePath string) bool {
+	_, err := os.Stat(filePath)
+	if err == nil {
+		return true
+	}
+	return false
+}
+
 func removeDir(dirPath string) {
 	_ = os.RemoveAll(dirPath)
 }
