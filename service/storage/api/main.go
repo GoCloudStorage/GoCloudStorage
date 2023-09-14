@@ -20,7 +20,7 @@ func main() {
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
 	redis.Init(opt.Cfg.Redis.Addr, opt.Cfg.Redis.Password, opt.Cfg.Redis.DB)
 	model.Init()
-	api.InitAPI(ctx)
+	handler.InitAPI(ctx)
 	<-ctx.Done()
 	logrus.Warnf("cloud file service stop by ctx in 3s...")
 	<-time.After(time.Second * 3)

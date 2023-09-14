@@ -36,9 +36,10 @@ type file struct {
 }
 
 type redis struct {
-	Addr     string `mapstructure:"addr"`
-	Password string `mapstructure:"password"`
-	DB       int    `mapstructure:"db"`
+	Addr        string `mapstructure:"addr"`
+	Password    string `mapstructure:"password"`
+	DB          int    `mapstructure:"db"`
+	UniqueValue int    `mapstructure:"unique_value"`
 }
 
 type storageRPC struct {

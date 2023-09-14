@@ -21,9 +21,10 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 		Size       int    `json:"size,omitempty" form:"size"`
 	}
 
-	type uploadResp struct {
-		Token     string `json:"token,omitempty"`
-		StorageId int64  `json:"storageId,omitempty"`
+	type preUploadResp struct {
+		Token      string `json:"token,omitempty"`
+		StorageId  int64  `json:"storageId,omitempty"`
+		IsComplete bool   `json:"is_complete,omitempty"`
 	}
 
 	p := new(preUploadReq)
@@ -33,7 +34,12 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	}
 
 	//验参
+	//计算块数
 	num := p.Size/opt.Cfg.File.BlockSize + 1
+	if p.Size%opt.Cfg.File.BlockSize == 0 {
+		num -= 1
+	}
+
 	token, err := token.GenerateUploadToken(p.Hash, num, p.Size)
 	if err != nil {
 		logrus.Error("GenerateUploadToken err:", err)
@@ -54,7 +60,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 
 	//已存在该文件，直接返回存储id
 	if info != nil {
-		return response.Resp200(ctx, uploadResp{
+		return response.Resp200(ctx, preUploadResp{
 			Token:     token,
 			StorageId: info.StorageId,
 		})
@@ -94,15 +100,16 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 			logrus.Error("CreateFile err:", err)
 			return err
 		}
-		return response.Resp200(ctx, uploadResp{
+		return response.Resp200(ctx, preUploadResp{
 			Token:     token,
 			StorageId: createStorageResp.StorageId,
 		})
 
 	} else { //存在该存储，直接返回存储id
-		return response.Resp200(ctx, uploadResp{
-			Token:     token,
-			StorageId: findStorageResp.StorageId,
+		return response.Resp200(ctx, preUploadResp{
+			Token:      token,
+			StorageId:  findStorageResp.StorageId,
+			IsComplete: findStorageResp.IsComplete,
 		})
 	}
 
