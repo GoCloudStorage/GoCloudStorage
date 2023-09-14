@@ -39,7 +39,7 @@ func (a *API) InitGrpc() {
 
 func (a *API) registerAPI() *fiber.App {
 	app := fiber.New()
-	api := app.Group("/storage_engine")
+	api := app.Group("/storage")
 	{
 		api.Get("/", func(ctx *fiber.Ctx) error {
 			return ctx.SendStatus(http.StatusOK)
@@ -56,6 +56,7 @@ func InitAPI(ctx context.Context) {
 		addr = fmt.Sprintf("%s:%s", opt.Cfg.CloudStorage.Host, opt.Cfg.CloudStorage.Port)
 		app  = api.registerAPI()
 	)
+	api.InitGrpc()
 	go func() {
 		logrus.Infof("Start fiber webserver, addr: %s", addr)
 		if err := app.Listen(addr); err != nil {
