@@ -27,7 +27,7 @@ func (f *FileInfo) FindOneByHash() error {
 }
 
 func (f *FileInfo) FindOneByID(id int) error {
-	return pg.Client.Model(f).Where("id = ?", f.ID).First(f).Error
+	return pg.Client.Model(f).Where("id = ?", id).First(f).Error
 }
 
 func (f *FileInfo) FindFileByUserIdAndFileInfo(userId uint, path string, fileName string, ext string) error {

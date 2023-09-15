@@ -1,15 +1,23 @@
 log-level: "debug"
-cloud_storage:
-    name: "cloud-file"
+file_service:
+    name: "file_service"
     host: "0.0.0.0"
     port: 8000
+storage_service:
+    name: "storage_service"
+    host: "0.0.0.0"
+    port: 8001
+user_service:
+    name: "user_service"
+    host: "0.0.0.0"
+    port: 8080
 storage:
-    type: "minio"
-    endpoint: "162.14.115.114:9000"
+    type: "local"
+    endpoint: "/home/qiao/GolandProjects/GoCloudStorage/pkg/storage_engine/local"
     access_key_id: "cill"
     secret_access_key: "12345678"
     use_ssl: false
-    bucket_name: "test-bucket"
+    bucket_name: "test"
 pg:
     host: "162.14.115.114"
     port: 5432
@@ -19,6 +27,7 @@ pg:
 
 file:
     block_size: 5242880
+
 redis:
     addr: "162.14.115.114:6379"
     password: "12345678"
@@ -26,8 +35,14 @@ redis:
 
 storageRPC:
     domain: "storageRPC"
-    endpoints: "127.0.0.1:50001"
+    endpoints: "127.0.0.1:8001"
 
 userRPC:
     domain: "user"
     endpoints: "127.0.0.1:50001"
+
+
+fileRPC:
+    domain: "fileRPC"
+    endpoints: "127.0.0.1:9001"
+

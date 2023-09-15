@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage_engine"
+<<<<<<< HEAD
+=======
+	"os"
+>>>>>>> f5f05860dc07a675e4e61571dfb88bb9103fede2
 	"testing"
 	"time"
 )
@@ -53,13 +57,29 @@ func TestStorageEngineUpload(t *testing.T) {
 func TestLocalStorageEngineGetURL(t *testing.T) {
 	redis.Init("162.14.115.114:6379", "12345678", 0)
 	var s StorageEngine
+<<<<<<< HEAD
 	s.Init(storage_engine.InitConfig{
 		Endpoint:        "./",
+=======
+	curDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.Init(storage_engine.InitConfig{
+		Endpoint:        curDir,
+>>>>>>> f5f05860dc07a675e4e61571dfb88bb9103fede2
 		AccessKeyID:     "",
 		SecretAccessKey: "",
 		UseSSL:          false,
 		BucketName:      "test",
 	})
+<<<<<<< HEAD
 	url := s.GenerateObjectURL("test-key", "123456", time.Second*150)
+=======
+	url, err := s.GenerateObjectURL("123456", time.Second*150)
+	if err != nil {
+		t.Fatal(err)
+	}
+>>>>>>> f5f05860dc07a675e4e61571dfb88bb9103fede2
 	t.Log(url)
 }

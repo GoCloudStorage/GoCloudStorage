@@ -50,14 +50,14 @@ var api API
 
 func InitAPI(ctx context.Context) {
 	var (
-		addr = fmt.Sprintf("%s:%s", opt.Cfg.CloudStorage.Host, opt.Cfg.CloudStorage.Port)
+		addr = fmt.Sprintf("%s:%s", opt.Cfg.UserService.Host, opt.Cfg.UserService.Port)
 		app  = api.RouterInit()
 	)
 	api.InitGrpc()
 	go func() {
 		logrus.Infof("Start fiber webserver, addr: %s", addr)
 		if err := app.Listen(addr); err != nil {
-			logrus.Panicf("%s listen address %v fail, err: %v", opt.Cfg.CloudStorage.Name, addr, err)
+			logrus.Panicf("%s listen address %v fail, err: %v", opt.Cfg.UserService.Name, addr, err)
 		}
 	}()
 	select {

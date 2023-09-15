@@ -30,6 +30,7 @@ func InitStorageRPC() (*MidClient[storage.StorageClient], error) {
 			MaxAttempts:     0,
 		},
 		storage.NewStorageClient,
+
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
 	)
@@ -37,4 +38,18 @@ func InitStorageRPC() (*MidClient[storage.StorageClient], error) {
 
 func sss() {
 
+}
+
+func InitUserRPCClient[T any](fn func(grpc.ClientConnInterface) T) (*MidClient[T], error) {
+	client, err := GetGrpcClient(Config{
+		Domain:          opt.Cfg.StorageRPC.Domain,
+		Endpoints:       opt.Cfg.UserRPC.Endpoints,
+		BackoffInterval: 0,
+		MaxAttempts:     0,
+	},
+		fn,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
+	)
+	return client, err
 }

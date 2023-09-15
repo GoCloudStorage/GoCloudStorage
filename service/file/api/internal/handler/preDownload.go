@@ -25,11 +25,20 @@ func (a *API) preDownload(c *fiber.Ctx) error {
 	}
 
 	// 校验访问权限
+<<<<<<< HEAD
 	id, ok := c.Locals("userID").(uint)
 	if !ok {
 		return response.Resp400(c, nil, "not have user id")
 	}
 	var userid = id
+=======
+	//id, ok := c.Locals("userID").(uint)
+	//if !ok {
+	//	return response.Resp400(c, nil, "not have user id")
+	//}
+	//var userid = id
+	userid := uint(0)
+>>>>>>> f5f05860dc07a675e4e61571dfb88bb9103fede2
 
 	if fileInfo.IsPrivate && userid != fileInfo.UploaderId {
 		return response.Resp400(c, nil, "没有访问权限")
@@ -40,11 +49,20 @@ func (a *API) preDownload(c *fiber.Ctx) error {
 		Hash:   fileInfo.Hash,
 		Expire: int64(time.Hour * 12),
 	}
+<<<<<<< HEAD
 	resp, err := a.storageRPC.GenerateDownloadURL(context.Background(), &req)
 	if err != nil {
 		return response.Resp500(c, nil)
 	}
 	url := resp.GetURL()
+=======
+	resp, err := a.storageRPCClient.GenerateDownloadURL(context.Background(), &req)
+	if err != nil {
+		return response.Resp500(c, nil, err.Error())
+	}
+	url := resp.GetURL()
+
+>>>>>>> f5f05860dc07a675e4e61571dfb88bb9103fede2
 	// 生产下载token
 	downloadToken, err := token.GenerateDownloadToken(fileInfo.Hash, fileInfo.FileName, fileInfo.Ext)
 	if err != nil {

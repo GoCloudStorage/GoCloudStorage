@@ -27,7 +27,7 @@ func (a *API) UserRegister(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	userClient, err := xrpc.InitRPCClient(user.NewUserServiceClient)
+	userClient, err := xrpc.InitUserRPCClient(user.NewUserServiceClient)
 
 	if err != nil {
 		logrus.Error("InitRPCClient err", err)
@@ -41,7 +41,7 @@ func (a *API) UserRegister(ctx *fiber.Ctx) (err error) {
 		PhoneNumber: req.PhoneNumber,
 	})
 	if err != nil {
-		logrus.Info("http main: 28", err)
+		logrus.Info(err)
 		return err
 	}
 	return response.Resp200(ctx, "注册成功")
@@ -62,7 +62,7 @@ func (a *API) UserLogin(ctx *fiber.Ctx) (err error) {
 		PhoneNumber: req.PhoneNumber,
 		Password:    req.PassWord,
 	}
-	userClient, err := xrpc.InitRPCClient(user.NewUserServiceClient)
+	userClient, err := xrpc.InitUserRPCClient(user.NewUserServiceClient)
 
 	if err != nil {
 		logrus.Error("InitRPCClient err", err)
