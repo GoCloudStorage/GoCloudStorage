@@ -35,6 +35,7 @@ func (s *StorageServer) UpdateStorage(ctx context.Context, in *storage.UpdateSto
 	}
 	si.RealPath = in.RealPath
 	si.Size = int(in.Size)
+
 	err := si.UpdateStorage()
 	if err != nil {
 		logrus.Error("update storage err:", err)
