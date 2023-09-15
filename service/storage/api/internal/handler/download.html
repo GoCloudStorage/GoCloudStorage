@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文件下载示例</title>
+</head>
+<body>
+<button onclick="downloadFile()">下载文件</button>
+
+<script>
+    function downloadFile() {
+        var fileUrl = 'http://localhost:8001/storage/download/rhewkkwyhabbtxojreqq6pwr8bqktgr7quacpcpx0vscvobev2n2slcfnh3ami7e'; // 文件的 URL
+        var fileName = 'resume.pdf'; // 文件名，包括扩展名
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', fileUrl, true);
+
+        // 设置请求头
+        xhr.setRequestHeader('Accept', 'application/pdf'); // 设置文件类型
+        xhr.setRequestHeader('Authorization', 'Bearer yourAccessToken'); // 设置身份验证令牌
+        xhr.setRequestHeader('Referer', 'https://example.com'); // 设置来源页面
+
+        xhr.responseType = 'blob'; // 设置响应类型为二进制数据
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const blob = xhr.response;
+                const url = window.URL.createObjectURL(blob);
+
+                // 创建一个下载链接
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.style.display = 'none';
+
+                // 模拟点击下载链接
+                a.click();
+
+                // 清理资源
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error('下载失败，HTTP状态码：', xhr.status);
+            }
+        };
+
+        xhr.send();
+    }
+</script>
+</body>
+</html>

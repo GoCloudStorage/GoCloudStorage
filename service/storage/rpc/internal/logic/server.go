@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/random"
@@ -13,7 +14,6 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"log"
 	"strconv"
 	"time"
 )
@@ -133,7 +133,6 @@ func (s *StorageServer) GenerateDownloadURL(ctx context.Context, req *storage.Ge
 		code := random.GenerateRandomString(64)
 		realPath, err := storage_engine.Client.GenerateObjectURL(req.GetHash(), time.Duration(req.GetExpire()))
 		if err != nil {
-			log.Println("222")
 			return nil, err
 		}
 		// 生成code:fileRealPath映射
@@ -166,7 +165,7 @@ func (s *StorageServer) GetRealPathByCode(ctx context.Context, req *storage.GetR
 }
 
 func generateURL(key string) string {
-	return fmt.Sprintf("localhost:8000/storage/download/%s", key)
+	return fmt.Sprintf("http://%s:%s/storage/download/%s", opt.Cfg.StorageService.Host, opt.Cfg.StorageService.Port, key)
 }
 
 func getCodeKey(code string) string {

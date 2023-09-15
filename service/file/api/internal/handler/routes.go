@@ -68,16 +68,16 @@ func (a *API) registerAPI() *fiber.App {
 
 var api API
 
-func InitAPI(ctx context.Context) {
+func InitAPI(ctx context.Context, name string, host string, port string) {
 	var (
-		addr = fmt.Sprintf("%s:%s", opt.Cfg.CloudStorage.Host, opt.Cfg.CloudStorage.Port)
+		addr = fmt.Sprintf("%s:%s", host, port)
 		app  = api.registerAPI()
 	)
 	api.InitGrpc()
 	go func() {
 		logrus.Infof("Start fiber webserver, addr: %s", addr)
 		if err := app.Listen(addr); err != nil {
-			logrus.Panicf("%s listen address %v fail, err: %v", opt.Cfg.CloudStorage.Name, addr, err)
+			logrus.Panicf("%s listen address %v fail, err: %v", name, addr, err)
 		}
 	}()
 	select {

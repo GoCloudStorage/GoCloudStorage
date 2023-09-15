@@ -1,8 +1,12 @@
 log-level: "debug"
-cloud_storage:
-    name: "cloud-file"
+file_service:
+    name: "file_service"
     host: "0.0.0.0"
     port: 8000
+storage_service:
+    name: "storage_service"
+    host: "0.0.0.0"
+    port: 8001
 storage:
     type: "local"
     endpoint: "/home/qiao/GolandProjects/GoCloudStorage/pkg/storage_engine/local"
@@ -28,8 +32,8 @@ redis:
 
 storageRPC:
     domain: "storageRPC"
-    endpoints: "127.0.0.1:8001"
+    endpoints: "127.0.0.1:9000"
 
 fileRPC:
     domain: "fileRPC"
-    endpoints: "127.0.0.1:8002"
+    endpoints: "127.0.0.1:9001"
