@@ -1,9 +1,13 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage_engine"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage_engine/local"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -38,6 +42,7 @@ func (a *API) upload(ctx *fiber.Ctx) error {
 
 	//分布式锁处理并发
 	ok := redis.SetLock(context.Background(), "lock_"+uploadToken.Hash, expireTime)
+	defer redis.ReleaseLock(context.Background(), "lock_"+uploadToken.Hash)
 
 	//未获取锁，返回最新的上传进度
 	if !ok {
@@ -64,5 +69,39 @@ func (a *API) upload(ctx *fiber.Ctx) error {
 		logrus.Error("redis incr block num err:", err)
 		return err
 	}
+
+	var s local.StorageEngine
+	err = s.UploadChunk(&storage_engine.UploadChunkRequest{
+		FileMD5: uploadToken.Hash,
+		Data:    bytes.NewReader(u.Data),
+		PartNum: int(num),
+	})
+
+	if err != nil {
+		logrus.Error("UploadChunk err:", err)
+		return err
+	}
+
+	//上传成功,是否传输完所有分片
+	if uploadToken.PartNum <= int(num) {
+		//更新存储文件完整性
+		_, err := a.storageRPCClient.UpdateStorage(context.Background(), &storage.UpdateStorageReq{
+			StorageId:  u.StorageId,
+			IsComplete: true,
+		})
+		if err != nil {
+			logrus.Error("UpdateStorage err:", err)
+			return err
+		}
+
+		return response.Resp200(ctx, &uploadResp{
+			IsComplete: true,
+			Num:        int(num),
+		})
+	}
+	return response.Resp200(ctx, &uploadResp{
+		IsComplete: false,
+		Num:        int(num),
+	})
 
 }

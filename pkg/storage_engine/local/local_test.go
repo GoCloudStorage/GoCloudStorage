@@ -18,7 +18,7 @@ func TestStorageEngineUpload(t *testing.T) {
 		UseSSL:          false,
 		BucketName:      "test",
 	})
-	err := s.UploadChunk(storage_engine.UploadChunkRequest{
+	err := s.UploadChunk(&storage_engine.UploadChunkRequest{
 		FileMD5: "123456",
 		Data:    bytes.NewReader([]byte("hello")),
 		PartNum: 0,
@@ -27,7 +27,7 @@ func TestStorageEngineUpload(t *testing.T) {
 		t.Fatal("failed to upload chunk 1")
 	}
 
-	err = s.UploadChunk(storage_engine.UploadChunkRequest{
+	err = s.UploadChunk(&storage_engine.UploadChunkRequest{
 		FileMD5: "123456",
 		Data:    bytes.NewReader([]byte(" world")),
 		PartNum: 1,
@@ -36,7 +36,7 @@ func TestStorageEngineUpload(t *testing.T) {
 		t.Fatal("failed to upload chunk 2")
 	}
 
-	err = s.UploadChunk(storage_engine.UploadChunkRequest{
+	err = s.UploadChunk(&storage_engine.UploadChunkRequest{
 		FileMD5: "123456",
 		Data:    bytes.NewReader([]byte(" cill")),
 		PartNum: 2,

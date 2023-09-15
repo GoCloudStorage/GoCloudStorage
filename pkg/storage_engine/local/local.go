@@ -30,7 +30,7 @@ func New(endpoint, accessKeyID, secretAccessKey, bucketName string, useSSL bool)
 	return client
 }
 
-func (s *StorageEngine) UploadChunk(request storage_engine.UploadChunkRequest) error {
+func (s *StorageEngine) UploadChunk(request *storage_engine.UploadChunkRequest) error {
 	dirPath := s.getFileDir(request.FileMD5)
 	return s.uploader.saveChunk(dirPath, request.PartNum, request.Data)
 }

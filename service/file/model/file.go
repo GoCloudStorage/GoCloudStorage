@@ -31,7 +31,7 @@ func (f *FileInfo) FindOneByID(id int) error {
 }
 
 func (f *FileInfo) FindFileByUserIdAndFileInfo(userId uint, path string, fileName string, ext string) error {
-	return pg.Client.Model(f).Where("uploader_id=? and path=? and file_name=? and ext=?", userId, path, fileName, ext).Error
+	return pg.Client.Model(f).Where("uploader_id=? and path=? and file_name=? and ext=?", userId, path, fileName, ext).First(f).Error
 }
 
 func Init() {

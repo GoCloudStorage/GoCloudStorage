@@ -42,10 +42,37 @@ message GetRealPathByCodeResp {
   string Path = 1;
 }
 
+message GetStorageByStorageIdReq{
+  int64 StorageId=1;
+}
+
+message GetStorageByStorageIdResp{
+  int64 StorageId = 1;
+  string Hash=2;
+  int32 Size=3;
+  bool  IsComplete=4;
+  string RealPath=5;
+}
+
+message UpdateStorageReq{
+  int64 StorageId=1;
+  string Hash=2;
+  int32 Size=3;
+  bool  IsComplete=4;
+  string RealPath=5;
+}
+
+message UpdateStorageResp{
+
+}
+
 service Storage {
   rpc FindStorageByHash(FindStorageByHashReq)returns(FindStorageByHashResp);
   rpc CreateStorage(CreateStorageReq) returns (CreateStorageResp);
   rpc GenerateDownloadURL(GenerateDownloadURLReq) returns (GenerateDownloadURLResp);
   rpc GetRealPathByCode(GetRealPathByCodeReq) returns (GetRealPathByCodeResp);
+  rpc GetStorageByStorageId(GetStorageByStorageIdReq)returns(GetStorageByStorageIdResp);
+  rpc UpdateStorage(UpdateStorageReq)returns(UpdateStorageResp);
+
 }
 

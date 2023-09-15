@@ -14,7 +14,7 @@ func Register(storage IStorage) {
 type IStorage interface {
 	Init(InitConfig)
 	// 分块上传
-	UploadChunk(request UploadChunkRequest) error
+	UploadChunk(request *UploadChunkRequest) error
 	MergeChunk(fileMD5 string, partSize int, dataSize int) error
 
 	GenerateObjectURL(key string, expire time.Duration) (string, error)

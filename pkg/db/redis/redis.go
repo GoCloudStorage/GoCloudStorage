@@ -35,7 +35,7 @@ func SetLock(ctx context.Context, lockKey string, lockTimeout time.Duration) boo
 }
 
 // 解锁
-func ReleaseLock(ctx context.Context, lockKey string) bool {
+func ReleaseLock(ctx context.Context, lockKey string) {
 	// 使用 Lua 脚本来释放锁
 	luaScript := `
 if redis.call("get", KEYS[1]) == ARGV[1] then
@@ -47,9 +47,8 @@ end
 	_, err := Client.Eval(ctx, luaScript, []string{lockKey}, opt.Cfg.Redis.UniqueValue).Result()
 	if err != nil {
 		logrus.Error("redis releaseLock err:", err)
-		return false
 	}
-	return true
+	return
 }
 
 func Get(ctx context.Context, key string) (string, error) {

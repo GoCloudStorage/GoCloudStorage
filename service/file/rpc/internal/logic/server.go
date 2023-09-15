@@ -7,6 +7,7 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/service/file/model"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type FileServer struct {
@@ -14,7 +15,7 @@ type FileServer struct {
 }
 
 func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*file.CreateFileResp, error) {
-	if in == nil {
+	if in.Hash == "" {
 		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
 
@@ -40,15 +41,22 @@ func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*f
 }
 
 func (s *FileServer) FindFileByUserIdAndFileInfo(ctx context.Context, in *file.FindFileByUserIdAndFileInfoReq) (*file.FindFileByUserIdAndFileInfoResp, error) {
-	if in == nil {
+	if in.UserId == 0 {
 		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
+
 	f := new(model.FileInfo)
 	err := f.FindFileByUserIdAndFileInfo(uint(in.UserId), in.Path, in.FileName, in.Ext)
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		logrus.Error("FindFileByUserIdAndFileInfo err:", err)
 		return nil, errors.New(response.RPC_DB_ERROR)
 	}
+
+	//未找到
+	if err != nil {
+		return &file.FindFileByUserIdAndFileInfoResp{}, nil
+	}
+
 	return &file.FindFileByUserIdAndFileInfoResp{
 		Hash:      f.Hash,
 		StorageId: f.StorageId,

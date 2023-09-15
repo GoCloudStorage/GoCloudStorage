@@ -11,6 +11,7 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/storage_engine"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"log"
 	"strconv"
@@ -21,16 +22,63 @@ type StorageServer struct {
 	storage.UnimplementedStorageServer
 }
 
-func (s *StorageServer) CreateStorage(ctx context.Context, in *storage.CreateStorageReq) (*storage.CreateStorageResp, error) {
-	parseToken, err := token.ParseUploadToken(in.Token)
-	if err != nil {
+func (s *StorageServer) UpdateStorage(ctx context.Context, in *storage.UpdateStorageReq) (*storage.UpdateStorageResp, error) {
+	if in.StorageId == 0 {
 		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
+
+	si := new(model.StorageInfo)
+	si.StorageId = uint64(in.StorageId)
+	si.Hash = in.Hash
+	if in.IsComplete != false {
+		si.IsComplete = true
+	}
+	si.RealPath = in.RealPath
+	si.Size = int(in.Size)
+	err := si.UpdateStorage()
+	if err != nil {
+		logrus.Error("update storage err:", err)
+		return nil, errors.New(response.RPC_DB_ERROR)
+	}
+	return &storage.UpdateStorageResp{}, nil
+
+}
+
+func (s *StorageServer) GetStorageByStorageId(ctx context.Context, in *storage.GetStorageByStorageIdReq) (*storage.GetStorageByStorageIdResp, error) {
+	si := new(model.StorageInfo)
+	si.StorageId = uint64(in.StorageId)
+	err := si.GetStorageByStorageId()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		logrus.Error("GetStorageByStorageId err:", err)
+		return nil, errors.New(response.RPC_DB_ERROR)
+	}
+	//未找到记录
+	if err != nil {
+		return &storage.GetStorageByStorageIdResp{}, nil
+	}
+	return &storage.GetStorageByStorageIdResp{
+		StorageId:  int64(si.StorageId),
+		Hash:       si.Hash,
+		Size:       int32(si.Size),
+		IsComplete: si.IsComplete,
+		RealPath:   si.RealPath,
+	}, nil
+}
+
+func (s *StorageServer) CreateStorage(ctx context.Context, in *storage.CreateStorageReq) (*storage.CreateStorageResp, error) {
+
+	parseToken, err := token.ParseUploadToken(in.Token)
+	if err != nil {
+		logrus.Error("parse upload token err:", err)
+		return nil, errors.New(response.RPC_PARAM_ERROR)
+	}
+
 	si := new(model.StorageInfo)
 	//验参
 	err = si.FindStorageByHash(parseToken.Hash)
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		logrus.Error("FindStorageByHash err:", err)
 		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}
 
@@ -39,6 +87,7 @@ func (s *StorageServer) CreateStorage(ctx context.Context, in *storage.CreateSto
 		si.Hash = parseToken.Hash
 		err = si.CreateStorage()
 		if err != nil {
+			logrus.Error("CreateStorage err:", err)
 			return nil, errors.New(response.RPC_DB_ERROR)
 		}
 
@@ -55,9 +104,17 @@ func (s *StorageServer) FindStorageByHash(ctx context.Context, in *storage.FindS
 	}
 	si := new(model.StorageInfo)
 	err := si.FindStorageByHash(in.Hash)
-	if err != nil {
+
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		logrus.Error("find storage by hash err:", err)
 		return nil, errors.New(response.RPC_DB_ERROR)
 	}
+
+	//未找到
+	if err != nil {
+		return &storage.FindStorageByHashResp{}, nil
+	}
+
 	return &storage.FindStorageByHashResp{
 		StorageId:  int64(si.StorageId),
 		Size:       int32(si.Size),

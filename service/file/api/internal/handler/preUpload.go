@@ -59,7 +59,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	}
 
 	//已存在该文件，直接返回存储id
-	if info != nil {
+	if info.StorageId != 0 {
 		return response.Resp200(ctx, preUploadResp{
 			Token:     token,
 			StorageId: info.StorageId,
@@ -69,7 +69,6 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 
 	//该用户未存在该文件，查看存储桶是否有通用的该数据
 	//查询是否存在该存储
-
 	findStorageResp, err := a.storageRPCClient.FindStorageByHash(context.Background(), &storage.FindStorageByHashReq{Hash: p.Hash})
 	if err != nil {
 		logrus.Error("FindStorageByHash err:", err)
@@ -77,40 +76,36 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	}
 
 	//未存在该存储，新建存储
-	if findStorageResp == nil {
+	sid := findStorageResp.StorageId
+	if findStorageResp.StorageId == 0 {
 		createStorageResp, err := a.storageRPCClient.CreateStorage(context.Background(), &storage.CreateStorageReq{Token: token})
 		if err != nil {
 			logrus.Error("CreateStorage err:", err)
 			return err
 		}
-
-		//新建用户文件信息
-		_, err = a.fileRPCClient.CreateFile(context.Background(), &file.CreateFileReq{
-			UserId:    p.UploaderId,
-			Path:      p.Path,
-			FileName:  p.FileName,
-			Ext:       p.Ext,
-			Hash:      p.Hash,
-			Size:      int32(p.Size),
-			BlockSize: int32(opt.Cfg.File.BlockSize),
-			StorageId: createStorageResp.StorageId,
-		})
-
-		if err != nil {
-			logrus.Error("CreateFile err:", err)
-			return err
-		}
-		return response.Resp200(ctx, preUploadResp{
-			Token:     token,
-			StorageId: createStorageResp.StorageId,
-		})
-
-	} else { //存在该存储，直接返回存储id
-		return response.Resp200(ctx, preUploadResp{
-			Token:      token,
-			StorageId:  findStorageResp.StorageId,
-			IsComplete: findStorageResp.IsComplete,
-		})
+		sid = createStorageResp.StorageId
 	}
+
+	//新建用户文件信息
+	_, err = a.fileRPCClient.CreateFile(context.Background(), &file.CreateFileReq{
+		UserId:    p.UploaderId,
+		Path:      p.Path,
+		FileName:  p.FileName,
+		Ext:       p.Ext,
+		Hash:      p.Hash,
+		Size:      int32(p.Size),
+		BlockSize: int32(opt.Cfg.File.BlockSize),
+		StorageId: sid,
+	})
+
+	if err != nil {
+		logrus.Error("CreateFile err:", err)
+		return err
+	}
+	return response.Resp200(ctx, preUploadResp{
+		Token:      token,
+		StorageId:  sid,
+		IsComplete: findStorageResp.IsComplete,
+	})
 
 }

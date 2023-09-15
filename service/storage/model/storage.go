@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/snowflake"
 	"gorm.io/gorm"
@@ -30,11 +31,21 @@ func (s *StorageInfo) BeforeCreate(tx *gorm.DB) error {
 
 // FindStorageByHash 通过hash查找文件
 func (s *StorageInfo) FindStorageByHash(hash string) error {
-	tx := pg.Client.Where("hash=?", s.Hash).First(s)
+	tx := pg.Client.Where("hash=?", hash).First(s)
 	return tx.Error
 }
 
 // CreateStorage 创建存储
 func (s *StorageInfo) CreateStorage() error {
+	fmt.Println("s:", s)
 	return pg.Client.Create(s).Error
+}
+
+func (s *StorageInfo) GetStorageByStorageId() error {
+	return pg.Client.Where("storage_id=?", s.StorageId).First(s).Error
+}
+
+func (s *StorageInfo) UpdateStorage() error {
+	return pg.Client.Model(&s).Updates(s).Error
+
 }
