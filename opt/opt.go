@@ -32,7 +32,7 @@ type pg struct {
 }
 
 type file struct {
-	BlockSize int64 `mapstructure:"block_size"`
+	BlockSize int `mapstructure:"block_size"`
 }
 
 type redis struct {
@@ -52,14 +52,15 @@ type fileRPC struct {
 }
 
 type config struct {
-	CloudStorage service    `mapstructure:"cloud_storage"`
-	LogLevel     string     `mapstructure:"log_level"`
-	Storage      storage    `mapstructure:"storage"`
-	Pg           pg         `mapstructure:"pg"`
-	File         file       `mapstructure:"file"`
-	Redis        redis      `mapstructure:"redis"`
-	StorageRPC   storageRPC `mapstructure:"storageRPC"`
-	FileRPC      fileRPC    `mapstructure:"FileRPC"`
+	FileService    service    `mapstructure:"file_service"`
+	StorageService service    `mapstructure:"storage_service"`
+	LogLevel       string     `mapstructure:"log_level"`
+	Storage        storage    `mapstructure:"storage"`
+	Pg             pg         `mapstructure:"pg"`
+	File           file       `mapstructure:"file"`
+	Redis          redis      `mapstructure:"redis"`
+	StorageRPC     storageRPC `mapstructure:"storageRPC"`
+	FileRPC        fileRPC    `mapstructure:"FileRPC"`
 }
 
 var (

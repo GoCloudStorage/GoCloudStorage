@@ -46,7 +46,7 @@ func GetGrpcClient[T any](config Config, fn func(grpc.ClientConnInterface) T, op
 	if err != nil {
 		return nil, err
 	}
-	clients[config.Domain] = clients
+	clients[config.Domain] = client
 
 	return client, nil
 }
