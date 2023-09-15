@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"regexp"
@@ -12,7 +13,7 @@ import (
 type User struct {
 	gorm.Model
 	UserName    string `json:"user_name"`
-	PassWord    string `json:"password"`
+	PassWord    string `json:"pass_word"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phone_number"`
 	Photo       string `json:"photo"`
@@ -24,20 +25,23 @@ func Init() {
 	pg.Client.AutoMigrate(User{})
 }
 
-// SetPassword 加密密码
-func (user *User) SetPassword(password string) error {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+// HashPassword 加密密码
+func HashPassword(password string) (string, error) {
+	// 生成盐值，并用盐值对密码进行哈希
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return "", err
 	}
-	user.PassWord = string(bytes)
-	return nil
+
+	// 返回哈希后的密码作为字符串
+	return string(hashedPassword), nil
 }
 
-// CheckPassword 检验密码
-func (user *User) CheckPassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(user.PassWord), []byte(password))
-	return err == nil
+// ComparePasswords 比较密码和已加密的密码是否匹配
+func ComparePasswords(hashedPassword, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	logrus.Error(hashedPassword, password)
+	return err
 }
 
 // UserMsgIsOk 判断用户信息是否符合要求

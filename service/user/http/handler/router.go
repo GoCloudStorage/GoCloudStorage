@@ -4,38 +4,44 @@ import (
 	"context"
 	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
-	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type API struct {
-	storageRPC storage.StorageClient
+	UserRPC user.UserServiceClient
 }
 
 func (a *API) InitGrpc() {
 	// add storage rpc client
 	client, err := xrpc.GetGrpcClient(xrpc.Config{
-		Domain:          "localhost:8001",
-		Endpoints:       nil,
+		Domain:          "user",
+		Endpoints:       []string{"localhost:50001"},
 		BackoffInterval: 0,
 		MaxAttempts:     0,
-	}, storage.NewStorageClient)
+	},
+		user.NewUserServiceClient,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	if err != nil {
 		panic(err)
 	}
-	a.storageRPC = client.NewSession()
+	a.UserRPC = client.NewSession()
 }
 
-func (a *API) registerAPI() *fiber.App {
+func (a *API) RouterInit() *fiber.App {
 	app := fiber.New()
+	app.Use(logger.New())
 
-	api := app.Group("/file")
+	user := app.Group("/user")
 	{
-		api.Post("/", preUpload)
-		//api.Get("/", GetAll)
-		api.Get("/:id", a.preDownload)
+		user.Post("/create", a.UserRegister)
+		user.Post("/login", a.UserLogin)
 	}
 	return app
 }
@@ -45,7 +51,7 @@ var api API
 func InitAPI(ctx context.Context) {
 	var (
 		addr = fmt.Sprintf("%s:%s", opt.Cfg.CloudStorage.Host, opt.Cfg.CloudStorage.Port)
-		app  = api.registerAPI()
+		app  = api.RouterInit()
 	)
 	api.InitGrpc()
 	go func() {

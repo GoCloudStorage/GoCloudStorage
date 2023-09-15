@@ -4,9 +4,7 @@ import (
 	"context"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
-	"github.com/GoCloudstorage/GoCloudstorage/service/user/http/routes"
-	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/server"
-
+	"github.com/GoCloudstorage/GoCloudstorage/service/user/http/handler"
 	"github.com/sirupsen/logrus"
 	"os/signal"
 	"syscall"
@@ -14,15 +12,15 @@ import (
 )
 
 func main() {
+	logrus.SetReportCaller(true)
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	defer cancel()
 
 	opt.InitConfig()
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
-	server.ClientInit()
-	defer server.Conn.Close()
-	app := routes.RouterInit()
-	app.Listen(":8080")
+
+	handler.InitAPI(ctx)
+
 	<-ctx.Done()
 	logrus.Warnf("cloud user service stop by ctx in 3s...")
 	<-time.After(time.Second * 3)

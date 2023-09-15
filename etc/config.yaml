@@ -26,4 +26,8 @@ redis:
 
 storageRPC:
     domain: "storageRPC"
-    endpoints: "127.0.0.1"
+    endpoints: "127.0.0.1:50001"
+
+userRPC:
+    domain: "user"
+    endpoints: "127.0.0.1:50001"

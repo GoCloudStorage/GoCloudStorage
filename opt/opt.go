@@ -46,6 +46,11 @@ type storageRPC struct {
 	Endpoints []string `mapstructure:"endpoints"`
 }
 
+type userRPC struct {
+	Domain    string   `mapstructure:"domain"`
+	Endpoints []string `mapstructure:"endpoints"`
+}
+
 type config struct {
 	CloudStorage service    `mapstructure:"cloud_storage"`
 	LogLevel     string     `mapstructure:"log_level"`
@@ -54,6 +59,7 @@ type config struct {
 	File         file       `mapstructure:"file"`
 	Redis        redis      `mapstructure:"redis"`
 	StorageRPC   storageRPC `mapstructure:"storageRPC"`
+	UserRPC      userRPC    `mapstructure:"userRPC"`
 }
 
 var (

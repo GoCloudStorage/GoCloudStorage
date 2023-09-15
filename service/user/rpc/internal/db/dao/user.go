@@ -19,7 +19,7 @@ func NewUserDao() *UserDao {
 
 // GetUserInfo 获取用户信息
 func (dao *UserDao) GetUserInfo(req *user.RegisterRequest) (user *model.User, err error) {
-	err = dao.Model(&model.User{}).Where("email=?", req.Email).First(&user).Error
+	err = dao.Model(&model.User{}).Where("phone_number=?", req.Email).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
@@ -28,18 +28,14 @@ func (dao *UserDao) GetUserInfo(req *user.RegisterRequest) (user *model.User, er
 
 // CreateUser 创建用户
 func (dao *UserDao) CreateUser(req *user.RegisterRequest) (err error) {
-	var u *model.User
+	var u model.User
 	var count int64
-	err = dao.AutoMigrate(&u)
-	if err != nil {
-		return err
-	}
-	dao.Model(&model.User{}).Where("email=?", req.Email).Count(&count)
+
+	dao.Model(&model.User{}).Where("phone_number=?", req.PhoneNumber).Count(&count)
 	if count != 0 {
 		return errors.New("user already exits")
 	}
-	_ = u.SetPassword(req.Password)
-	u = &model.User{
+	u = model.User{
 		UserName:    req.UserName,
 		PassWord:    req.Password,
 		Email:       req.Email,
@@ -48,6 +44,12 @@ func (dao *UserDao) CreateUser(req *user.RegisterRequest) (err error) {
 		Status:      0,
 		Permission:  1,
 	}
+	password, err := model.HashPassword(u.PassWord)
+
+	if err != nil {
+		return err
+	}
+	u.PassWord = password
 	if err = dao.Model(&model.User{}).Create(&u).Error; err != nil {
 		logrus.Error("create u error", err)
 		return
