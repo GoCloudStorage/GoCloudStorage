@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/snowflake"
 	"gorm.io/gorm"
@@ -37,7 +36,6 @@ func (s *StorageInfo) FindStorageByHash(hash string) error {
 
 // CreateStorage 创建存储
 func (s *StorageInfo) CreateStorage() error {
-	fmt.Println("s:", s)
 	return pg.Client.Create(s).Error
 }
 
@@ -46,6 +44,6 @@ func (s *StorageInfo) GetStorageByStorageId() error {
 }
 
 func (s *StorageInfo) UpdateStorage() error {
-	return pg.Client.Model(&s).Updates(s).Error
+	return pg.Client.Model(s).Where("storage_id=?", s.StorageId).Updates(s).Error
 
 }

@@ -22,7 +22,7 @@ pg:
     db_name: "test"
 
 file:
-    block_size: 5242880
+    block_size: 5
 
 redis:
     addr: "162.14.115.114:6379"
