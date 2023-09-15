@@ -39,7 +39,7 @@ func (a *API) InitGrpc() {
 
 func (a *API) registerAPI() *fiber.App {
 	app := fiber.New()
-	api := app.Group("/storage_engine")
+	api := app.Group("/storage")
 	{
 		api.Get("/", func(ctx *fiber.Ctx) error {
 			return ctx.SendStatus(http.StatusOK)

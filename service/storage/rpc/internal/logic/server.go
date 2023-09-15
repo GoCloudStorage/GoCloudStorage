@@ -74,14 +74,13 @@ func (s *StorageServer) GenerateDownloadURL(ctx context.Context, req *storage.Ge
 	if errors.Is(err, redis.Nil) {
 		// 没有该文件url
 		code := random.GenerateRandomString(64)
-
 		realPath, err := storage_engine.Client.GenerateObjectURL(req.GetHash(), time.Duration(req.GetExpire()))
 		if err != nil {
 			log.Println("222")
 			return nil, err
 		}
 		// 生成code:fileRealPath映射
-		err = redis.SetEx(ctx, code, realPath, time.Duration(req.GetExpire()))
+		err = redis.SetEx(ctx, getCodeKey(code), realPath, time.Duration(req.GetExpire()))
 		if err != nil {
 			return nil, err
 		}
@@ -102,11 +101,7 @@ func (s *StorageServer) GenerateDownloadURL(ctx context.Context, req *storage.Ge
 }
 
 func (s *StorageServer) GetRealPathByCode(ctx context.Context, req *storage.GetRealPathByCodeReq) (*storage.GetRealPathByCodeResp, error) {
-	fileID, err := redis.Get(ctx, getCodeKey(req.GetCode()))
-	if err != nil {
-		return nil, err
-	}
-	realPath, err := redis.Get(ctx, getFileKey(fileID))
+	realPath, err := redis.Get(ctx, getCodeKey(req.GetCode()))
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +109,7 @@ func (s *StorageServer) GetRealPathByCode(ctx context.Context, req *storage.GetR
 }
 
 func generateURL(key string) string {
-	return fmt.Sprintf("localhost:8000/storage/dowanload/%s", key)
+	return fmt.Sprintf("localhost:8000/storage/download/%s", key)
 }
 
 func getCodeKey(code string) string {

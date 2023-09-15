@@ -32,7 +32,7 @@ type pg struct {
 }
 
 type file struct {
-	BlockSize int `mapstructure:"block_size"`
+	BlockSize int64 `mapstructure:"block_size"`
 }
 
 type redis struct {
