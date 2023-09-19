@@ -7,6 +7,10 @@ storage_service:
     name: "storage_service"
     host: "0.0.0.0"
     port: 8001
+user_service:
+    name: "user_service"
+    host: "0.0.0.0"
+    port: 8080
 storage:
     type: "local"
     endpoint: "/home/qiao/GolandProjects/GoCloudStorage/pkg/storage_engine/local"
@@ -37,3 +41,7 @@ storageRPC:
 fileRPC:
     domain: "fileRPC"
     endpoints: "127.0.0.1:9001"
+
+userRPC:
+    domain: "userRPC"
+    endpoints: "127.0.0.1:50001"
