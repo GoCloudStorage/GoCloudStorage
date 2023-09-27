@@ -4,75 +4,32 @@ package storage;
 
 option go_package = "pb/storage";
 
-message CreateStorageReq {
-  string token = 1;
 
+
+
+message GetUploadURLReq {
+  string hash = 1; // 文件hash
 }
 
-message CreateStorageResp {
-  int64 StorageId = 1;
+message GetUploadURLResp {
+  string url = 1; // 上传url
+  string uploadType = 2; // 上传类型, Normal/Multipart
 }
 
-message FindStorageByHashReq{
-  string Hash=1;
+message GetDownloadURLReq {
+  string hash = 1; // 文件hash
+  string filename = 2; // 文件名
+  string ext = 3; // 扩展名
+  int64 expire = 4; // 有效时间, 单位秒
 }
 
-message FindStorageByHashResp{
-  int64 StorageId = 1;
-  int32 Size=2;
-  bool  IsComplete=3;
-  string RealPath=4;
-}
-
-message GenerateDownloadURLReq {
-  string Hash = 1;
-  int64 Expire = 2;
-  uint32 FileID = 3;
-}
-
-message GenerateDownloadURLResp {
-  string URL = 1;
-}
-
-message GetRealPathByCodeReq {
-  string Code = 1;
-}
-
-message GetRealPathByCodeResp {
-  string Path = 1;
-}
-
-message GetStorageByStorageIdReq{
-  int64 StorageId=1;
-}
-
-message GetStorageByStorageIdResp{
-  int64 StorageId = 1;
-  string Hash=2;
-  int32 Size=3;
-  bool  IsComplete=4;
-  string RealPath=5;
-}
-
-message UpdateStorageReq{
-  int64 StorageId=1;
-  string Hash=2;
-  int32 Size=3;
-  bool  IsComplete=4;
-  string RealPath=5;
-}
-
-message UpdateStorageResp{
-
+message GetDownloadURLResp {
+  string url = 1;
+  int64 totalSize = 2; // 文件总大小
 }
 
 service Storage {
-  rpc FindStorageByHash(FindStorageByHashReq)returns(FindStorageByHashResp);
-  rpc CreateStorage(CreateStorageReq) returns (CreateStorageResp);
-  rpc GenerateDownloadURL(GenerateDownloadURLReq) returns (GenerateDownloadURLResp);
-  rpc GetRealPathByCode(GetRealPathByCodeReq) returns (GetRealPathByCodeResp);
-  rpc GetStorageByStorageId(GetStorageByStorageIdReq)returns(GetStorageByStorageIdResp);
-  rpc UpdateStorage(UpdateStorageReq)returns(UpdateStorageResp);
-
+  rpc GetUploadURL(GetUploadURLReq) returns (GetUploadURLResp);
+  rpc GetDownloadURL(GetDownloadURLReq) returns (GetDownloadURLResp);
 }
 

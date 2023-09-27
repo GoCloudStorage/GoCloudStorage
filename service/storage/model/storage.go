@@ -8,11 +8,11 @@ import (
 
 type StorageInfo struct {
 	gorm.Model
-	StorageId  uint64 `json:"storage_id,omitempty"`
-	Hash       string `json:"hash,omitempty"`
-	Size       int    `json:"size,omitempty"`        // 文件大小
-	IsComplete bool   `json:"is_complete,omitempty"` // 文件完整性
-	RealPath   string `json:"real_path,omitempty"`
+	StorageId uint64 `json:"storage_id,omitempty"`
+	IsRemote  bool   `json:"is_remote"`      // 是否远程存储
+	Hash      string `json:"hash,omitempty"` // 文件hash
+	Size      int    `json:"size,omitempty"` // 文件大小
+	RealPath  string `json:"real_path"`      // 文件存储位置
 }
 
 func Init() {
@@ -28,8 +28,8 @@ func (s *StorageInfo) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-// FindStorageByHash 通过hash查找文件
-func (s *StorageInfo) FindStorageByHash(hash string) error {
+// FirstByHash 通过hash查找文件
+func (s *StorageInfo) FirstByHash(hash string) error {
 	tx := pg.Client.Where("hash=?", hash).First(s)
 	return tx.Error
 }
@@ -39,8 +39,8 @@ func (s *StorageInfo) CreateStorage() error {
 	return pg.Client.Create(s).Error
 }
 
-func (s *StorageInfo) GetStorageByStorageId() error {
-	return pg.Client.Where("storage_id=?", s.StorageId).First(s).Error
+func (s *StorageInfo) GetStorageByStorageId(storageID uint64) error {
+	return pg.Client.Where("storage_id=?", storageID).First(s).Error
 }
 
 func (s *StorageInfo) UpdateStorage() error {

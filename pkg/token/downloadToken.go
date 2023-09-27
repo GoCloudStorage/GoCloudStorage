@@ -10,20 +10,20 @@ const (
 )
 
 type DownloadToken struct {
-	Hash     string
-	Filename string
-	Ext      string
+	StorageID uint64
+	Filename  string
+	Ext       string
 	jwt.StandardClaims
 }
 
-func GenerateDownloadToken(hash, filename, ext string) (string, error) {
+func GenerateDownloadToken(storageID uint64, filename, ext string, expire time.Duration) (string, error) {
 	nowTime := time.Now()
-	expireTime := nowTime.Add(expireTime)
+	expireTime := nowTime.Add(expire)
 	issuer := issuer
 	claims := DownloadToken{
-		Hash:     hash,
-		Filename: filename,
-		Ext:      ext,
+		StorageID: storageID,
+		Filename:  filename,
+		Ext:       ext,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    issuer,

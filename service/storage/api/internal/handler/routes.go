@@ -47,8 +47,8 @@ func (a *API) registerAPI() *fiber.App {
 		api.Get("/", func(ctx *fiber.Ctx) error {
 			return ctx.SendStatus(http.StatusOK)
 		})
-		api.Post("/upload", a.upload)
-		api.Get("/download/:key", a.download)
+		//api.Put("/upload/:token", a.upload)
+		api.Get("/download/:token", a.download)
 	}
 	return app
 }
