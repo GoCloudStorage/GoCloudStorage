@@ -57,7 +57,14 @@ type userRPC struct {
 	Endpoints []string `mapstructure:"endpoints"`
 }
 
+type MQ struct {
+	Addr     string `mapstructure:"addr"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+}
+
 type config struct {
+	Mq             MQ         `mapstructure:"mq"`
 	UserService    service    `mapstructure:"user_service"`
 	FileService    service    `mapstructure:"file_service"`
 	StorageService service    `mapstructure:"storage_service"`

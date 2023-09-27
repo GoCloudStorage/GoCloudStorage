@@ -7,15 +7,13 @@ import (
 
 type FileInfo struct {
 	gorm.Model
-	FileName   string `json:"file_name,omitempty"`
-	Path       string `json:"path,omitempty"`
+	FileName string `json:"file_name,omitempty"`
+	Ext      string `json:"ext,omitempty"`
+	Hash     string `json:"hash,omitempty"`
+
 	Size       int32  `json:"size,omitempty"`
-	BlockSize  int32  `json:"blockSize"`
-	Ext        string `json:"ext,omitempty"`
 	UploaderId uint   `json:"uploader_id,omitempty"`
-	Hash       string `json:"hash,omitempty"`
-	StorageId  int64  `json:"storage_id,omitempty"`
-	IsPrivate  bool   `json:"is_private"`
+	StorageId  uint64 `json:"storage_id,omitempty"`
 }
 
 func (f *FileInfo) Create() error {

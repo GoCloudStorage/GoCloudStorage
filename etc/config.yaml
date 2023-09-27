@@ -34,6 +34,11 @@ redis:
     db: 0
     unique_value: 1
 
+mq:
+    addr: "162.14.115.114:5672"
+    username: "cill"
+    password: "12345678"
+
 storageRPC:
     domain: "storageRPC"
     endpoints: "127.0.0.1:9000"
