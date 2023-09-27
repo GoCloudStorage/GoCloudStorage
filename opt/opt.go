@@ -19,6 +19,7 @@ type storage struct {
 	Endpoint        string `mapstructure:"endpoint"`
 	AccessKeyID     string `mapstructure:"access_key_id"`
 	SecretAccessKey string `mapstructure:"secret_access_key"`
+	BlockSize       int32  `mapstructure:"block_size"`
 	UseSSL          bool   `mapstructure:"use_ssl"`
 	BucketName      string `mapstructure:"bucket_name"`
 }
@@ -69,7 +70,7 @@ type config struct {
 	FileService    service    `mapstructure:"file_service"`
 	StorageService service    `mapstructure:"storage_service"`
 	LogLevel       string     `mapstructure:"log_level"`
-	Storage        storage    `mapstructure:"storage"`
+	Storage        storage    `mapstructure:"local"`
 	Pg             pg         `mapstructure:"pg"`
 	File           file       `mapstructure:"file"`
 	Redis          redis      `mapstructure:"redis"`

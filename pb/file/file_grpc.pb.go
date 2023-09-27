@@ -18,7 +18,7 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// FileClient is the client API for File service.
+// FileClient is the client API for File logic.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
@@ -52,7 +52,7 @@ func (c *fileClient) CreateFile(ctx context.Context, in *CreateFileReq, opts ...
 	return out, nil
 }
 
-// FileServer is the server API for File service.
+// FileServer is the server API for File logic.
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility
 type FileServer interface {
@@ -73,7 +73,7 @@ func (UnimplementedFileServer) CreateFile(context.Context, *CreateFileReq) (*Cre
 }
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
 
-// UnsafeFileServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeFileServer may be embedded to opt out of forward compatibility for this logic.
 // Use of this interface is not recommended, as added methods to FileServer will
 // result in compilation errors.
 type UnsafeFileServer interface {
@@ -120,7 +120,7 @@ func _File_CreateFile_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-// File_ServiceDesc is the grpc.ServiceDesc for File service.
+// File_ServiceDesc is the grpc.ServiceDesc for File logic.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var File_ServiceDesc = grpc.ServiceDesc{

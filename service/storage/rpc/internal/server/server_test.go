@@ -1,4 +1,4 @@
-package logic
+package server
 
 import (
 	"context"
@@ -18,5 +18,12 @@ func TestGrpcServer(t *testing.T) {
 		Ext:      "",
 		Expire:   0,
 	})
+	fmt.Println(resp, err)
+}
+
+func TestUploadOSS(t *testing.T) {
+	dial, _ := grpc.Dial("localhost:9000", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	client := storage.NewStorageClient(dial)
+	resp, err := client.UploadOSS(context.Background(), &storage.UploadOSSReq{StorageID: 196168787014189057})
 	fmt.Println(resp, err)
 }

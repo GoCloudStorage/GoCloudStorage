@@ -47,3 +47,11 @@ func (s *StorageInfo) UpdateStorage() error {
 	return pg.Client.Model(s).Where("storage_id=?", s.StorageId).Updates(s).Error
 
 }
+
+func (s *StorageInfo) IsExistByKey(hash string) bool {
+	err := s.FirstByHash(hash)
+	if err == nil {
+		return true
+	}
+	return false
+}

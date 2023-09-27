@@ -16,6 +16,7 @@ storage:
     endpoint: "/home/qiao/GolandProjects/GoCloudStorage/pkg/storage_engine/local"
     access_key_id: "cill"
     secret_access_key: "12345678"
+    block_size: 5
     use_ssl: false
     bucket_name: "test"
 pg:

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/rabbitmq/amqp091-go"
+	"sync"
 )
 
 var conn *amqp091.Connection
@@ -30,15 +31,14 @@ func Publish(exchange, routeKey string, data []byte) error {
 	return ch.PublishWithContext(context.Background(), exchange, routeKey, true, false, msg)
 }
 
-func Consume(ctx context.Context, queue string, fn func(ctx context.Context, msgs <-chan amqp091.Delivery)) error {
+func Consume(wg *sync.WaitGroup, queue string, fn func(wg *sync.WaitGroup, msgs <-chan amqp091.Delivery)) {
 	ch, err := conn.Channel()
 	if err != nil {
-		return err
+		panic(err)
 	}
 	consume, err := ch.Consume(queue, "", false, false, false, false, nil)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	go fn(ctx, consume)
-	return nil
+	go fn(wg, consume)
 }

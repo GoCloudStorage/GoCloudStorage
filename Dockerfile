@@ -4,7 +4,7 @@
 #
 #COPY . .
 #
-#RUN go build -o storageSvc ./service/storage/api
+#RUN go build -o storageSvc ./logic/local/api
 
 FROM ubuntu:latest
 

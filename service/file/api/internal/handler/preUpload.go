@@ -30,7 +30,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	p := new(preUploadReq)
 
 	if err := ctx.BodyParser(p); err != nil {
-		return err
+		return response.Resp400(ctx, nil)
 	}
 
 	//验参
@@ -43,7 +43,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	token, err := token.GenerateUploadToken(p.Hash, num, p.Size)
 	if err != nil {
 		logrus.Error("GenerateUploadToken err:", err)
-		return err
+		return response.Resp400(ctx, nil)
 	}
 
 	//查询文件是否存在
@@ -55,7 +55,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	})
 	if err != nil {
 		logrus.Error("FindFileByUserIdAndFileInfo err:", err)
-		return err
+		return response.Resp429(ctx, nil)
 	}
 
 	//已存在该文件，直接返回存储id
@@ -72,7 +72,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	findStorageResp, err := a.storageRPCClient.FindStorageByHash(context.Background(), &storage.FindStorageByHashReq{Hash: p.Hash})
 	if err != nil {
 		logrus.Error("FindStorageByHash err:", err)
-		return err
+		return response.Resp500(ctx, nil)
 	}
 
 	//未存在该存储，新建存储
@@ -81,7 +81,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 		createStorageResp, err := a.storageRPCClient.CreateStorage(context.Background(), &storage.CreateStorageReq{Token: token})
 		if err != nil {
 			logrus.Error("CreateStorage err:", err)
-			return err
+			return response.Resp500(ctx, nil)
 		}
 		sid = createStorageResp.StorageId
 	}
@@ -100,7 +100,7 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 
 	if err != nil {
 		logrus.Error("CreateFile err:", err)
-		return err
+		return response.Resp500(ctx, nil)
 	}
 	return response.Resp200(ctx, preUploadResp{
 		Token:      token,

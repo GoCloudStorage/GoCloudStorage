@@ -9,11 +9,13 @@ option go_package = "pb/storage";
 
 message GetUploadURLReq {
   string hash = 1; // 文件hash
+  int64 expire=2;
+  int32  size=3;
 }
 
 message GetUploadURLResp {
   string url = 1; // 上传url
-  string uploadType = 2; // 上传类型, Normal/Multipart
+  int32 chunkNum= 2; // 分块数量
 }
 
 message GetDownloadURLReq {
@@ -28,8 +30,17 @@ message GetDownloadURLResp {
   int64 totalSize = 2; // 文件总大小
 }
 
+message UploadOSSReq {
+  uint64 storageID = 1;
+}
+
+message UploadOSSResp {
+
+}
+
 service Storage {
   rpc GetUploadURL(GetUploadURLReq) returns (GetUploadURLResp);
   rpc GetDownloadURL(GetDownloadURLReq) returns (GetDownloadURLResp);
+  rpc UploadOSS(UploadOSSReq) returns (UploadOSSResp);
 }
 

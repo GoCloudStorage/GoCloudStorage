@@ -20,7 +20,7 @@ type API struct {
 }
 
 func (a *API) InitGrpc() {
-	// add storage rpc client
+	// add local rpc client
 	client, err := xrpc.GetGrpcClient(
 		xrpc.Config{
 			Domain:          opt.Cfg.UserRPC.Domain,

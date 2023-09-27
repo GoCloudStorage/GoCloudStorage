@@ -19,7 +19,7 @@ type API struct {
 }
 
 func (a *API) InitGrpc() {
-	// add storage rpc client
+	// add local rpc client
 	client, err := xrpc.GetGrpcClient(
 		xrpc.Config{
 			Domain:          opt.Cfg.StorageRPC.Domain,
@@ -35,13 +35,12 @@ func (a *API) InitGrpc() {
 		panic(err)
 	}
 	a.storageRPCClient = client.NewSession()
-
 }
 
 func (a *API) registerAPI() *fiber.App {
 	app := fiber.New()
 
-	api := app.Group("/storage")
+	api := app.Group("/local")
 	api.Use(cors.New())
 	{
 		api.Get("/", func(ctx *fiber.Ctx) error {
@@ -49,6 +48,7 @@ func (a *API) registerAPI() *fiber.App {
 		})
 		//api.Put("/upload/:token", a.upload)
 		api.Get("/download/:token", a.download)
+		api.Put("/upload/:token", a.upload)
 	}
 	return app
 }

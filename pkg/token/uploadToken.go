@@ -6,23 +6,19 @@ import (
 )
 
 const issuer = "duryun"
-const expireTime = 3000 * time.Second
 
 type UploadToken struct {
-	Hash    string
-	PartNum int
-	Size    int
+	Key string
 	jwt.StandardClaims
 }
 
-func GenerateUploadToken(hash string, partNum int, size int) (string, error) {
+func GenerateUploadToken(key string, expire time.Duration) (string, error) {
 	nowTime := time.Now()
-	expireTime := nowTime.Add(expireTime)
+	expireTime := nowTime.Add(expire)
 	issuer := issuer
 	claims := UploadToken{
-		Hash:    hash,
-		PartNum: partNum,
-		Size:    size,
+		Key: key,
+
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    issuer,

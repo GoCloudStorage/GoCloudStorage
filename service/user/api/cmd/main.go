@@ -24,6 +24,6 @@ func main() {
 	handler.InitAPI(ctx, userConfig.Name, userConfig.Host, userConfig.Port)
 
 	<-ctx.Done()
-	logrus.Warnf("cloud user service stop by ctx in 3s...")
+	logrus.Warnf("cloud user logic stop by ctx in 3s...")
 	<-time.After(time.Second * 3)
 }

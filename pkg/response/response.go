@@ -58,6 +58,7 @@ func Resp(c *fiber.Ctx, status uint32, msg string, data any) error {
 	return c.JSON(fiber.Map{"status": status, "msg": msg, "data": data})
 }
 
+// Resp200 请求成功
 func Resp200(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG200
 
@@ -68,6 +69,7 @@ func Resp200(c *fiber.Ctx, data any, msgs ...string) error {
 	return Resp(c, 200, msg, data)
 }
 
+// Resp202 请求成功, 请稍后...
 func Resp202(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG202
 
@@ -78,6 +80,7 @@ func Resp202(c *fiber.Ctx, data any, msgs ...string) error {
 	return Resp(c, 202, msg, data)
 }
 
+// Resp400 请求参数错误
 func Resp400(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG400
 
@@ -88,6 +91,7 @@ func Resp400(c *fiber.Ctx, data any, msgs ...string) error {
 	return Resp(c, 400, msg, data)
 }
 
+// Resp401 登录已过期
 func Resp401(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG401
 
@@ -98,6 +102,7 @@ func Resp401(c *fiber.Ctx, data any, msgs ...string) error {
 	return Resp(c, 401, msg, data)
 }
 
+// Resp403 请求权限不足
 func Resp403(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG403
 
@@ -108,6 +113,7 @@ func Resp403(c *fiber.Ctx, data any, msgs ...string) error {
 	return Resp(c, 403, msg, data)
 }
 
+// Resp429 请求资源未找到
 func Resp429(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG429
 
@@ -118,6 +124,7 @@ func Resp429(c *fiber.Ctx, data any, msgs ...string) error {
 	return Resp(c, 429, msg, data)
 }
 
+// Resp500 服务器开小差了, 请稍后再试
 func Resp500(c *fiber.Ctx, data any, msgs ...string) error {
 	msg := MSG500
 

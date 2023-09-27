@@ -20,7 +20,7 @@ func main() {
 
 	listener, err := net.Listen("tcp", opt.Cfg.FileRPC.Endpoints[0])
 	if err != nil {
-		logrus.Error("start storage rpc listener err:", err)
+		logrus.Error("start local rpc listener err:", err)
 		return
 	}
 	s := grpc.NewServer()
@@ -28,7 +28,7 @@ func main() {
 	logrus.Infof("start listen %s", opt.Cfg.FileRPC.Endpoints[0])
 	err = s.Serve(listener)
 	if err != nil {
-		logrus.Error("start storage rpc err:", err)
+		logrus.Error("start local rpc err:", err)
 		return
 	}
 }

@@ -22,6 +22,6 @@ func main() {
 	SvcConfig := opt.Cfg.FileService
 	handler.InitAPI(ctx, SvcConfig.Name, SvcConfig.Host, SvcConfig.Port)
 	<-ctx.Done()
-	logrus.Warnf("cloud file service stop by ctx in 3s...")
+	logrus.Warnf("cloud file logic stop by ctx in 3s...")
 	<-time.After(time.Second * 3)
 }
