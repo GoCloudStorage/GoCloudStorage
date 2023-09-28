@@ -23,11 +23,10 @@ func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*f
 		FileName:   in.FileName,
 		Path:       in.Path,
 		Size:       in.Size,
-		BlockSize:  in.BlockSize,
 		Ext:        in.Ext,
 		UploaderId: uint(in.UserId),
 		Hash:       in.Hash,
-		StorageId:  in.StorageId,
+		StorageId:  uint64(in.StorageId),
 		IsPrivate:  false,
 	}
 	err := f.Create()
@@ -59,6 +58,6 @@ func (s *FileServer) FindFileByUserIdAndFileInfo(ctx context.Context, in *file.F
 
 	return &file.FindFileByUserIdAndFileInfoResp{
 		Hash:      f.Hash,
-		StorageId: f.StorageId,
+		StorageId: int64(f.StorageId),
 	}, nil
 }

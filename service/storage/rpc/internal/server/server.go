@@ -41,7 +41,7 @@ func (s StorageServer) GetUploadURL(ctx context.Context, req *storage.GetUploadU
 	chunkNum := req.Size/opt.Cfg.Storage.BlockSize + 1
 
 	return &storage.GetUploadURLResp{
-		Url:      fmt.Sprintf("http://%s/upload/%s", s.HttpAddr, uploadToken),
+		Url:      fmt.Sprintf("%s/upload/%s", s.HttpAddr, uploadToken),
 		ChunkNum: chunkNum,
 	}, nil
 }
@@ -120,11 +120,16 @@ func (s StorageServer) UploadOSS(ctx context.Context, req *storage.UploadOSSReq)
 	if storageInfo.IsRemote {
 		return nil, fmt.Errorf("[storageID:%d] object already at remote", storageInfo.StorageId)
 	}
-	err := s.Oss.PutObject(strconv.FormatUint(storageInfo.StorageId, 10), storageInfo.RealPath)
+	etag, err := s.Oss.PutObject(strconv.FormatUint(storageInfo.StorageId, 10), storageInfo.RealPath, -1)
 	if err != nil {
 		return nil, fmt.Errorf("failed to transfer object to oss, err: %v", err)
 	}
-	return &storage.UploadOSSResp{}, nil
+	storageInfo.IsRemote = true
+	err = storageInfo.UpdateStorage()
+	if err != nil {
+		return nil, fmt.Errorf("updatee storageinfo failed, err: %v", err)
+	}
+	return &storage.UploadOSSResp{Etag: etag}, nil
 }
 
 func (s StorageServer) componentDownloadURL(downloadToken string) string {

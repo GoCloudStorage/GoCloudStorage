@@ -11,6 +11,7 @@ import (
 )
 
 func convertContentRange(d string) (res logic.ContentRange, err error) {
+
 	t := strings.Split(d, " ")
 	if len(t) != 2 {
 		return res, fmt.Errorf("Content-Range format incorrect")
@@ -75,12 +76,6 @@ func parasUploadCommonHeader(c *fiber.Ctx) (*logic.UploadReq, error) {
 	total, err := strconv.Atoi(ocl)
 	if err != nil {
 		return nil, fmt.Errorf("convert OSS-Content-Length fail, err: %v", err)
-	}
-
-	// 获取object md5
-	md5 := c.Get("OSS-MD5", "nil")
-	if md5 == "nil" {
-		return nil, errors.New("md5 form not found")
 	}
 
 	// 获取key

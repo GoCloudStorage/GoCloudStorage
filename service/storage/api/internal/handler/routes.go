@@ -39,16 +39,16 @@ func (a *API) InitGrpc() {
 
 func (a *API) registerAPI() *fiber.App {
 	app := fiber.New()
-
-	api := app.Group("/local")
+	api := app.Group("")
 	api.Use(cors.New())
 	{
 		api.Get("/", func(ctx *fiber.Ctx) error {
 			return ctx.SendStatus(http.StatusOK)
 		})
 		//api.Put("/upload/:token", a.upload)
+		app.Put("/upload/:token", a.upload)
 		api.Get("/download/:token", a.download)
-		api.Put("/upload/:token", a.upload)
+
 	}
 	return app
 }

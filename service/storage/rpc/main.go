@@ -26,7 +26,7 @@ func main() {
 		return
 	}
 	s := grpc.NewServer()
-	storage.RegisterStorageServer(s, &server.StorageServer{HttpAddr: "http://localhost:8001", Oss: oss.NewMinio(opt.Cfg.)})
+	storage.RegisterStorageServer(s, &server.StorageServer{HttpAddr: "http://localhost:8001", Oss: oss.NewMinio(opt.Cfg.Storage.Endpoint, opt.Cfg.Storage.AccessKeyID, opt.Cfg.Storage.SecretAccessKey, opt.Cfg.Storage.BucketName)})
 	logrus.Infof("start listen %s", opt.Cfg.StorageRPC.Endpoints[0])
 	err = s.Serve(listener)
 	if err != nil {

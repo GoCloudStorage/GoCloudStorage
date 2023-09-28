@@ -56,7 +56,8 @@ func (a *API) upload(c *fiber.Ctx) error {
 	//上传完成
 	redis.Client.SAdd(context.Background(), getUploadChunkKey(uploadReq.Key), uploadReq.ChunkNumber)
 	// 上传到指定大小，合并
-	if object.Size == uploadReq.ContentRange.Total {
+
+	if object.Size == uploadReq.TotalSize {
 		path, err := local.Client.MergeChunk(object.Hash, object.Size)
 		if err != nil {
 			return response.Resp500(c, nil, fmt.Sprintf("merge chunk failed, err: %v", err))
@@ -66,7 +67,6 @@ func (a *API) upload(c *fiber.Ctx) error {
 		if err = object.UpdateStorage(); err != nil {
 			return response.Resp500(c, nil, fmt.Sprintf("save object record failed, err: %v", err))
 		}
-
 		return response.Resp200(c, nil, "上传完成，合并成功")
 	}
 	return response.Resp200(c, nil)
@@ -74,9 +74,9 @@ func (a *API) upload(c *fiber.Ctx) error {
 }
 
 func getUploadChunkKey(key string) string {
-	return "storage:upload:chunk:" + key
+	return fmt.Sprintf("storage:upload:%s:lockChunk", key)
 }
 
 func getUploadFinishChunkKey(key string) string {
-	return fmt.Sprintf("storage:upload:%s", key)
+	return fmt.Sprintf("storage:upload:%s:chunck", key)
 }

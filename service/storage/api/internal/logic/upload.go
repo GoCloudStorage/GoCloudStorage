@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/local"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
@@ -30,7 +31,7 @@ type ContentRange struct {
 
 func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, error) {
 	var (
-		object *model.StorageInfo
+		object model.StorageInfo
 		err    error
 		find   bool
 	)
@@ -46,7 +47,7 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 	}
 	//没找到,创建存储
 	if !find {
-		object = &model.StorageInfo{
+		object = model.StorageInfo{
 			Hash: uploadReq.Key,
 			Size: uploadReq.TotalSize,
 		}
@@ -59,26 +60,35 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 	// 保存数据，并将大小存储在redis中
 	sizeKey := getUploadSizeKey(object.Hash)
 	s, err := redis.Get(context.Background(), sizeKey)
-	if err != nil {
+	if err != nil && err != redis.Nil {
 		logrus.Error("redis get size err:", err)
 		return nil, err
+	}
+	if s == "" {
+		s = "0"
 	}
 	size, err := strconv.Atoi(s)
 	if err != nil {
 		logrus.Error("strconv.Atoi err：", err)
 		return nil, err
 	}
+	//文件已经完整了
+	if size >= uploadReq.TotalSize {
+		return &object, nil
+	}
 
+	//文件长度
+	lenth := f.Len()
 	if err = local.Client.SaveChunk(uploadReq.Key, uploadReq.ChunkNumber, f, int64(uploadReq.ContentRange.Start)); err != nil {
 		logrus.Errorf("failed save local, err: %v", err)
 		return nil, err
 	}
-	redis.SetEx(context.Background(), sizeKey, size+f.Len(), time.Minute*30)
-	object.Size = size + f.Len()
+	redis.SetEx(context.Background(), sizeKey, size+lenth, time.Minute*30)
+	object.Size = size + lenth
 
-	return object, err
+	return &object, err
 }
 
 func getUploadSizeKey(key string) string {
-	return "storage:upload:size:" + key
+	return fmt.Sprintf("storage:upload:%s:size", key)
 }

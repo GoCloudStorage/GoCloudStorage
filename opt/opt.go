@@ -70,7 +70,7 @@ type config struct {
 	FileService    service    `mapstructure:"file_service"`
 	StorageService service    `mapstructure:"storage_service"`
 	LogLevel       string     `mapstructure:"log_level"`
-	Storage        storage    `mapstructure:"local"`
+	Storage        storage    `mapstructure:"storage"`
 	Pg             pg         `mapstructure:"pg"`
 	File           file       `mapstructure:"file"`
 	Redis          redis      `mapstructure:"redis"`
@@ -94,7 +94,7 @@ func InitConfig() {
 	viper.SetConfigType("yaml")
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
-		logrus.Panicf("failed to read config storage_engine, err: %v", err)
+		logrus.Panicf("failed to read config Cloud Storage, err: %v", err)
 	}
 	if err := viper.Unmarshal(Cfg); err != nil {
 		logrus.Panicf("failed to unmarshal config, err: %v", err)
