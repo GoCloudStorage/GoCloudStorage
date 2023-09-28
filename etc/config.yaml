@@ -13,8 +13,8 @@ user_service:
     port: 8080
 storage:
     type: "local"
-    endpoint: "/home/qiao/GolandProjects/GoCloudStorage/pkg/storage_engine/local"
-    access_key_id: "cill"
+    endpoint: "162.14.115.114:9000"
+    access_key_id: "test-minio"
     secret_access_key: "12345678"
     block_size: 5
     use_ssl: false

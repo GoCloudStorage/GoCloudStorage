@@ -14,6 +14,7 @@ type FileInfo struct {
 	Size       int32  `json:"size,omitempty"`
 	UploaderId uint   `json:"uploader_id,omitempty"`
 	StorageId  uint64 `json:"storage_id,omitempty"`
+	IsPrivate  bool   `json:"is_private"`
 }
 
 func (f *FileInfo) Create() error {
@@ -26,6 +27,11 @@ func (f *FileInfo) FindOneByHash() error {
 
 func (f *FileInfo) FindOneByID(id int) error {
 	return pg.Client.Model(f).Where("id = ?", id).First(f).Error
+}
+
+func (f *FileInfo) FindAllByUploaderID(id int) (fileInfos []FileInfo, err error) {
+	err = pg.Client.Model(f).Where("uploader_id = ?", id).Find(&fileInfos).Error
+	return
 }
 
 func (f *FileInfo) FindFileByUserIdAndFileInfo(userId uint, path string, fileName string, ext string) error {

@@ -6,7 +6,7 @@ import (
 )
 
 type Task struct {
-	storageID uint64
+	StorageID uint64
 }
 
 func (t Task) transfer() error {

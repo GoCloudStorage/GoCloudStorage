@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/mq"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/model"
@@ -18,6 +19,7 @@ import (
 func main() {
 	var wg sync.WaitGroup
 	opt.InitConfig()
+	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
 	mq.Init(opt.Cfg.Mq.Addr, opt.Cfg.Mq.Username, opt.Cfg.Mq.Password)
 	wg.Add(1)
 	storageRPC, err := xrpc.GetGrpcClient(
@@ -37,27 +39,15 @@ func main() {
 	mq.Consume(&wg, "transfer-task", func(wg *sync.WaitGroup, msgs <-chan amqp091.Delivery) {
 		for msg := range msgs {
 			var (
-				task        model.Task
-				storageInfo model.StorageInfo
+				task model.Task
 			)
 			if err := json.Unmarshal(msg.Body, &task); err != nil {
 				logrus.Errorf("unmarshal task failed, err: %v", err)
 				break
 			}
 
-			if _, err := storageRPC.NewSession().UploadOSS(context.Background(), &storage.UploadOSSReq{StorageID: task.storageID}); err != nil {
+			if _, err := storageRPC.NewSession().UploadOSS(context.Background(), &storage.UploadOSSReq{StorageID: task.StorageID}); err != nil {
 				logrus.Error("upload object to oss failed, err: %v", err)
-				continue
-			}
-			err := storageInfo.GetStorageByStorageId(task.storageID)
-			if err != nil {
-				logrus.Errorf("get storageinfo failed, err: %v", err)
-				continue
-			}
-			storageInfo.IsRemote = true
-			err = storageInfo.UpdateStorage()
-			if err != nil {
-				logrus.Errorf("updatee storageinfo failed, err: %v", err)
 				continue
 			}
 			msg.Ack(false)

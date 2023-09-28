@@ -24,7 +24,7 @@ func Init(addr string, password string, db int) {
 	})
 }
 
-// 给redis添加分布式锁
+// SetLock 给redis添加分布式锁
 func SetLock(ctx context.Context, lockKey string, lockTimeout time.Duration) bool {
 	ok, err := Client.SetNX(ctx, lockKey, opt.Cfg.Redis.UniqueValue, lockTimeout).Result()
 	if err != nil {
@@ -34,7 +34,7 @@ func SetLock(ctx context.Context, lockKey string, lockTimeout time.Duration) boo
 	return ok
 }
 
-// 解锁
+// ReleaseLock 解分布式锁
 func ReleaseLock(ctx context.Context, lockKey string) {
 	// 使用 Lua 脚本来释放锁
 	luaScript := `

@@ -30,7 +30,6 @@ func (a *API) download(c *fiber.Ctx) error {
 		logrus.Error(err)
 		return response.Resp400(c, nil)
 	}
-	logrus.Info("jfiaejfiajoifje")
 	// 设置响应头
 	c.Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fmt.Sprintf("%s.%s", downloadToken.Filename, downloadToken.Ext)))
 	c.Set("Content-Type", "application/"+downloadToken.Ext)
