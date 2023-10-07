@@ -28,8 +28,8 @@ func NewMinio(endpoint string, username string, password, bucketname string) *Mi
 }
 
 func (m *Minio) GetPreSignedDownloadURL(key string) (string, error) {
-	//TODO implement me
-	panic("implement me")
+	u, err := m.client.PresignedGetObject(context.Background(), m.bucketname, key, time.Minute*15, nil)
+	return u.String(), err
 }
 
 func (m *Minio) PutObject(key string, objectPath string, fileSize int64) (string, error) {

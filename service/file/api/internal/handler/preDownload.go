@@ -24,15 +24,15 @@ func (a *API) preDownload(c *fiber.Ctx) error {
 	}
 
 	// 校验访问权限
-	id, ok := c.Locals("userID").(uint)
-	if !ok {
-		return response.Resp400(c, nil, "not have user id")
-	}
-	var userid = id
-
-	if fileInfo.IsPrivate && userid != fileInfo.UploaderId {
-		return response.Resp400(c, nil, "没有访问权限")
-	}
+	//id, ok := c.Locals("userID").(uint)
+	//if !ok {
+	//	return response.Resp400(c, nil, "not have user id")
+	//}
+	//var userid = id
+	//
+	//if fileInfo.IsPrivate && userid != fileInfo.UploaderId {
+	//	return response.Resp400(c, nil, "没有访问权限")
+	//}
 
 	// 生成下载链接, 调用storage server
 	req := storage.GetDownloadURLReq{

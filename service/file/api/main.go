@@ -25,10 +25,3 @@ func main() {
 	logrus.Warnf("cloud file logic stop by ctx in 3s...")
 	<-time.After(time.Second * 3)
 }
-
-/*
-hash:partNum:Lock
-hash-SET= partNum
-part_set = hash:partNUM2
-
-*/

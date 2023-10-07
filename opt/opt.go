@@ -70,7 +70,7 @@ type config struct {
 	FileService    service    `mapstructure:"file_service"`
 	StorageService service    `mapstructure:"storage_service"`
 	LogLevel       string     `mapstructure:"log_level"`
-	Storage        storage    `mapstructure:"local"`
+	Storage        storage    `mapstructure:"storage"`
 	Pg             pg         `mapstructure:"pg"`
 	File           file       `mapstructure:"file"`
 	Redis          redis      `mapstructure:"redis"`
