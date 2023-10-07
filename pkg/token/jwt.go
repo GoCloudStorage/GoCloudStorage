@@ -8,7 +8,7 @@ import (
 // JWTMiddleware JWT身份验证的中间件
 func JWTMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		token := c.Get("token")
+		token := c.Get("Authorization")
 		err := VerifyToken(token)
 		if err != nil {
 			return response.Resp400(c, err.Error())

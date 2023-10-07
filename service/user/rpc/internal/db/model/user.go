@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"

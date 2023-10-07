@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/internal/db/dao"
 	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/internal/db/model"
@@ -14,6 +14,11 @@ import (
 
 type UserServiceServer struct {
 	user.UnimplementedUserServiceServer
+}
+
+func (u *UserServiceServer) VerifyAccount(ctx context.Context, req *user.VerifyAccountReq) (*user.VerifyAccountResp, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (u *UserServiceServer) UserRegister(ctx context.Context, req *user.RegisterRequest) (resp *user.RegisterResponse, err error) {

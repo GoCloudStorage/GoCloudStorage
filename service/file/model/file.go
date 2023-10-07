@@ -25,11 +25,11 @@ func (f *FileInfo) FindOneByHash() error {
 	return pg.Client.Model(f).Where("hash = ?", f.Hash).First(f).Error
 }
 
-func (f *FileInfo) FindOneByID(id int) error {
+func (f *FileInfo) FindOneByID(id uint) error {
 	return pg.Client.Model(f).Where("id = ?", id).First(f).Error
 }
 
-func (f *FileInfo) FindAllByUploaderID(id int) (fileInfos []FileInfo, err error) {
+func (f *FileInfo) FindAllByUploaderID(id uint) (fileInfos []FileInfo, err error) {
 	err = pg.Client.Model(f).Where("uploader_id = ?", id).Find(&fileInfos).Error
 	return
 }

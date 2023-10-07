@@ -6,6 +6,7 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/file"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -58,9 +59,10 @@ func (a *API) registerAPI() *fiber.App {
 	app := fiber.New()
 
 	api := app.Group("/file")
+	api.Use(token.JWTMiddleware())
 	{
 		//api.Post("/", a.preUpload)
-		//api.Get("/", a.getAllFile)
+		api.Get("/", a.getAllFile)
 		api.Get("/:id", a.preDownload)
 	}
 	return app
