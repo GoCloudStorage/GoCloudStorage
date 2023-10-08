@@ -72,13 +72,16 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 		logrus.Error("strconv.Atoi err：", err)
 		return nil, err
 	}
-	//文件已经完整了
-	if size >= uploadReq.TotalSize {
-		return &object, nil
-	}
 
 	//文件长度
 	lenth := f.Len()
+
+	//文件已经完整了,直接返回
+	if size >= uploadReq.TotalSize {
+		return &model.StorageInfo{}, nil
+	}
+
+	//保存
 	if err = local.Client.SaveChunk(uploadReq.Key, uploadReq.ChunkNumber, f, int64(uploadReq.ContentRange.Start)); err != nil {
 		logrus.Errorf("failed save local, err: %v", err)
 		return nil, err

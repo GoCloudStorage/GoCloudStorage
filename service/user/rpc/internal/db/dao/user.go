@@ -2,7 +2,7 @@ package dao
 
 import (
 	"errors"
-	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"github.com/GoCloudstorage/GoCloudstorage/service/user/rpc/internal/db/model"
 	"github.com/sirupsen/logrus"

@@ -23,7 +23,20 @@ message UserDetailResponse{
   string token = 1;
 }
 
+message VerifyAccountReq {
+  string token = 1;
+}
+
+message VerifyAccountResp {
+  uint64 userID = 1;
+  string username = 2;
+  string email = 3;
+  string photo = 4;
+  string phoneNumber = 5;
+}
+
 service UserService{
   rpc UserLogin(LoginRequest) returns(UserDetailResponse);
   rpc UserRegister(RegisterRequest) returns(RegisterResponse);
+  rpc VerifyAccount(VerifyAccountReq) returns(VerifyAccountResp);
 }

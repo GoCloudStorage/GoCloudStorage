@@ -23,29 +23,6 @@ type StorageServer struct {
 	storage.UnimplementedStorageServer
 }
 
-func (s StorageServer) GetUploadURL(ctx context.Context, req *storage.GetUploadURLReq) (*storage.GetUploadURLResp, error) {
-	var (
-		storageInfo model.StorageInfo
-	)
-	expire := time.Minute * 30
-	if storageInfo.IsExistByKey(req.Hash) {
-		return &storage.GetUploadURLResp{}, errors.New(response.RPC_PARAM_ERROR)
-	}
-	if req.Expire != 0 {
-		expire = time.Second * time.Duration(req.Expire)
-	}
-	uploadToken, err := token.GenerateUploadToken(req.Hash, expire)
-	if err != nil {
-		return nil, errors.New(response.RPC_PARAM_ERROR)
-	}
-	chunkNum := req.Size/opt.Cfg.Storage.BlockSize + 1
-
-	return &storage.GetUploadURLResp{
-		Url:      fmt.Sprintf("%s/upload/%s", s.HttpAddr, uploadToken),
-		ChunkNum: chunkNum,
-	}, nil
-}
-
 func (s StorageServer) GetDownloadURL(ctx context.Context, req *storage.GetDownloadURLReq) (*storage.GetDownloadURLResp, error) {
 	var (
 		key         string
@@ -108,6 +85,29 @@ func (s StorageServer) GetDownloadURL(ctx context.Context, req *storage.GetDownl
 			TotalSize: 0,
 		}, nil
 	}
+}
+
+func (s StorageServer) GetUploadURL(ctx context.Context, req *storage.GetUploadURLReq) (*storage.GetUploadURLResp, error) {
+	var (
+		storageInfo model.StorageInfo
+	)
+	expire := time.Minute * 30
+	if storageInfo.IsExistByKey(req.Hash) {
+		return &storage.GetUploadURLResp{}, errors.New(response.RPC_PARAM_ERROR)
+	}
+	if req.Expire != 0 {
+		expire = time.Second * time.Duration(req.Expire)
+	}
+	uploadToken, err := token.GenerateUploadToken(req.Hash, expire)
+	if err != nil {
+		return nil, errors.New(response.RPC_PARAM_ERROR)
+	}
+	chunkNum := req.Size/opt.Cfg.Storage.BlockSize + 1
+
+	return &storage.GetUploadURLResp{
+		Url:      fmt.Sprintf("%s/upload/%s", s.HttpAddr, uploadToken),
+		ChunkNum: chunkNum,
+	}, nil
 }
 
 func (s StorageServer) UploadOSS(ctx context.Context, req *storage.UploadOSSReq) (*storage.UploadOSSResp, error) {

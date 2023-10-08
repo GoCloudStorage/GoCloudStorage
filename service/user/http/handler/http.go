@@ -6,22 +6,18 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 func (a *API) UserRegister(ctx *fiber.Ctx) (err error) {
-	type User struct {
-		gorm.Model
+	type UserReq struct {
 		UserName    string `json:"user_name"`
 		PassWord    string `json:"pass_word"`
 		Email       string `json:"email"`
 		PhoneNumber string `json:"phone_number"`
 		Photo       string `json:"photo"`
-		Status      uint64 `json:"status"`     // 1 在线 2 下线
-		Permission  uint64 `json:"permission"` // 1 普通用户 2 管理员 3 超级管理员
 	}
 
-	req := &User{}
+	req := &UserReq{}
 	if err = ctx.BodyParser(&req); err != nil {
 		return err
 	}
