@@ -46,6 +46,7 @@ type redis struct {
 type storageRPC struct {
 	Domain    string   `mapstructure:"domain"`
 	Endpoints []string `mapstructure:"endpoints"`
+	IsRemote  int      `mapstructure:"is_remote"`
 }
 
 type fileRPC struct {

@@ -43,6 +43,7 @@ mq:
 storageRPC:
     domain: "storageRPC"
     endpoints: "127.0.0.1:9000"
+    is_remote: 1
 
 fileRPC:
     domain: "fileRPC"

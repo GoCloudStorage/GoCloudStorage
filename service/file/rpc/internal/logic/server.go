@@ -14,6 +14,45 @@ type FileServer struct {
 	file.UnimplementedFileServer
 }
 
+func (s *FileServer) UpdateFile(ctx context.Context, in *file.UpdateFileReq) (*file.UpdateFileResp, error) {
+	var f model.FileInfo
+	//验参
+	err := f.FindOneByID(uint(in.FileId))
+	if err != nil {
+		logrus.Error("find file by id err:", err)
+		return nil, err
+	}
+
+	if f.UploaderId != uint(in.UserId) {
+		return nil, errors.New(response.RPC_PARAM_ERROR)
+	}
+
+	if in.IsPrivate {
+		f.IsPrivate = in.IsPrivate
+	}
+	if !in.IsPrivate && f.IsPrivate {
+		f.IsPrivate = false
+	}
+	if in.StorageId != 0 {
+		f.StorageId = uint64(in.StorageId)
+	}
+	if in.Ext != "" {
+		f.Ext = in.Ext
+	}
+	if in.FileName != "" {
+		f.FileName = in.FileName
+	}
+	if in.Path != "" {
+		f.Path = in.Path
+	}
+
+	err = f.UpdateFile()
+	if err != nil {
+		logrus.Error("update file err:", err)
+		return nil, err
+	}
+	return &file.UpdateFileResp{}, nil
+}
 func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*file.CreateFileResp, error) {
 	if in.Hash == "" {
 		return nil, errors.New(response.RPC_PARAM_ERROR)
@@ -30,13 +69,17 @@ func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*f
 		IsPrivate:  false,
 	}
 	err := f.Create()
-
+	err = f.FindOneByHash()
+	if err != nil {
+		logrus.Error("find file err:", err)
+		return nil, errors.New(response.RPC_DB_ERROR)
+	}
 	if err != nil {
 		logrus.Error("CreateFile err:", err)
 		return nil, errors.New(response.RPC_DB_ERROR)
 	}
 
-	return &file.CreateFileResp{}, nil
+	return &file.CreateFileResp{FileId: int32(f.ID)}, nil
 }
 
 func (s *FileServer) FindFileByUserIdAndFileInfo(ctx context.Context, in *file.FindFileByUserIdAndFileInfoReq) (*file.FindFileByUserIdAndFileInfoResp, error) {

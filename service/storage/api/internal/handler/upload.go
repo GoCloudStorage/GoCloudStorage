@@ -3,9 +3,12 @@ package handler
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/redis"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/local"
+	"github.com/GoCloudstorage/GoCloudstorage/pkg/mq"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/service/storage/api/internal/logic"
@@ -14,10 +17,22 @@ import (
 	"time"
 )
 
+func getUploadChunkKey(key string) string {
+	return fmt.Sprintf("storage:upload:%s:lockChunk", key)
+}
+
+func getUploadFinishChunkKey(key string) string {
+	return fmt.Sprintf("storage:upload:%s:chunck", key)
+}
+
 func (a *API) upload(c *fiber.Ctx) error {
 	var (
 		uploadToken string
 	)
+	type resp struct {
+		StorageId uint64 `json:"storage_id"`
+	}
+
 	uploadToken = c.Params("token")
 	parseUploadToken, err := token.ParseUploadToken(uploadToken)
 	if err != nil {
@@ -67,16 +82,21 @@ func (a *API) upload(c *fiber.Ctx) error {
 		if err = object.UpdateStorage(); err != nil {
 			return response.Resp500(c, nil, fmt.Sprintf("save object record failed, err: %v", err))
 		}
-		return response.Resp200(c, nil, "上传完成，合并成功")
+		//完成上传，通知异步
+		if opt.Cfg.StorageRPC.IsRemote == 1 {
+			marshal, err := json.Marshal(object.StorageId)
+			if err != nil {
+				logrus.Error("异步上传oss marshal storageId err:", err)
+				return response.Resp200(c, resp{StorageId: object.StorageId}, "上传完成，marshal id err")
+			}
+			err = mq.Publish("", "transfer-task", marshal)
+			if err != nil {
+				logrus.Error("异步上传oss err:", err)
+				return response.Resp200(c, resp{StorageId: object.StorageId}, "上传完成，异步上传失败")
+			}
+		}
+		return response.Resp200(c, resp{StorageId: object.StorageId}, "上传完成，合并成功")
 	}
 	return response.Resp200(c, nil)
 
-}
-
-func getUploadChunkKey(key string) string {
-	return fmt.Sprintf("storage:upload:%s:lockChunk", key)
-}
-
-func getUploadFinishChunkKey(key string) string {
-	return fmt.Sprintf("storage:upload:%s:chunck", key)
 }

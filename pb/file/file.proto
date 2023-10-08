@@ -7,7 +7,20 @@ option go_package="pb/file";
 service File {
   rpc FindFileByUserIdAndFileInfo(FindFileByUserIdAndFileInfoReq)returns(FindFileByUserIdAndFileInfoResp);
   rpc CreateFile(CreateFileReq) returns (CreateFileResp);
+  rpc UpdateFile(UpdateFileReq)returns(UpdateFileResp);
 }
+
+message UpdateFileReq{
+  int64 FileId=1;
+  int64 UserId=2;
+  int64 StorageId=3;
+  string FileName=4;
+  string Ext=5;
+  string Path=6;
+  bool IsPrivate=7;
+}
+
+message UpdateFileResp{}
 
 message FindFileByUserIdAndFileInfoReq{
   int64  UserId=1;
@@ -28,7 +41,7 @@ message CreateFileReq {
   string Ext=4;
   string Hash=5;
   int32 Size=6;
-  int32 BlockSize=7;
+  bool IsPrivate=7;
   int64 StorageId=8;
 }
 

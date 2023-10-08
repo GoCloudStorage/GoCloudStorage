@@ -17,11 +17,16 @@ import (
 )
 
 func main() {
-	var wg sync.WaitGroup
+
 	opt.InitConfig()
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
 	mq.Init(opt.Cfg.Mq.Addr, opt.Cfg.Mq.Username, opt.Cfg.Mq.Password)
-	wg.Add(1)
+	go consumeTransfer()
+	var forever chan struct{}
+	<-forever
+}
+
+func consumeTransfer() {
 	storageRPC, err := xrpc.GetGrpcClient(
 		xrpc.Config{
 			Domain:          opt.Cfg.StorageRPC.Domain,
@@ -36,17 +41,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	var wg sync.WaitGroup
+	wg.Add(1)
 	mq.Consume(&wg, "transfer-task", func(wg *sync.WaitGroup, msgs <-chan amqp091.Delivery) {
 		for msg := range msgs {
-			var (
-				task model.Task
-			)
+			var task model.Task
 			if err := json.Unmarshal(msg.Body, &task); err != nil {
 				logrus.Errorf("unmarshal task failed, err: %v", err)
-				break
+				continue
 			}
-
-			if _, err := storageRPC.NewSession().UploadOSS(context.Background(), &storage.UploadOSSReq{StorageID: task.StorageID}); err != nil {
+			if _, err = storageRPC.NewSession().UploadOSS(context.Background(), &storage.UploadOSSReq{StorageID: task.StorageID}); err != nil {
 				logrus.Error("upload object to oss failed, err: %v", err)
 				continue
 			}

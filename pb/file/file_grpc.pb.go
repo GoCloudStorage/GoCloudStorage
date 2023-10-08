@@ -18,12 +18,13 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// FileClient is the client API for File logic.
+// FileClient is the client API for File service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
 	FindFileByUserIdAndFileInfo(ctx context.Context, in *FindFileByUserIdAndFileInfoReq, opts ...grpc.CallOption) (*FindFileByUserIdAndFileInfoResp, error)
 	CreateFile(ctx context.Context, in *CreateFileReq, opts ...grpc.CallOption) (*CreateFileResp, error)
+	UpdateFile(ctx context.Context, in *UpdateFileReq, opts ...grpc.CallOption) (*UpdateFileResp, error)
 }
 
 type fileClient struct {
@@ -52,12 +53,22 @@ func (c *fileClient) CreateFile(ctx context.Context, in *CreateFileReq, opts ...
 	return out, nil
 }
 
-// FileServer is the server API for File logic.
+func (c *fileClient) UpdateFile(ctx context.Context, in *UpdateFileReq, opts ...grpc.CallOption) (*UpdateFileResp, error) {
+	out := new(UpdateFileResp)
+	err := c.cc.Invoke(ctx, "/file.File/UpdateFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FileServer is the server API for File service.
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility
 type FileServer interface {
 	FindFileByUserIdAndFileInfo(context.Context, *FindFileByUserIdAndFileInfoReq) (*FindFileByUserIdAndFileInfoResp, error)
 	CreateFile(context.Context, *CreateFileReq) (*CreateFileResp, error)
+	UpdateFile(context.Context, *UpdateFileReq) (*UpdateFileResp, error)
 	mustEmbedUnimplementedFileServer()
 }
 
@@ -71,9 +82,12 @@ func (UnimplementedFileServer) FindFileByUserIdAndFileInfo(context.Context, *Fin
 func (UnimplementedFileServer) CreateFile(context.Context, *CreateFileReq) (*CreateFileResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateFile not implemented")
 }
+func (UnimplementedFileServer) UpdateFile(context.Context, *UpdateFileReq) (*UpdateFileResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateFile not implemented")
+}
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
 
-// UnsafeFileServer may be embedded to opt out of forward compatibility for this logic.
+// UnsafeFileServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to FileServer will
 // result in compilation errors.
 type UnsafeFileServer interface {
@@ -120,7 +134,25 @@ func _File_CreateFile_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-// File_ServiceDesc is the grpc.ServiceDesc for File logic.
+func _File_UpdateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateFileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServer).UpdateFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/file.File/UpdateFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServer).UpdateFile(ctx, req.(*UpdateFileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// File_ServiceDesc is the grpc.ServiceDesc for File service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var File_ServiceDesc = grpc.ServiceDesc{
@@ -134,6 +166,10 @@ var File_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateFile",
 			Handler:    _File_CreateFile_Handler,
+		},
+		{
+			MethodName: "UpdateFile",
+			Handler:    _File_UpdateFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

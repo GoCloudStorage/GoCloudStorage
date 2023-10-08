@@ -24,6 +24,7 @@ func Publish(exchange, routeKey string, data []byte) error {
 		return err
 	}
 	defer ch.Close()
+
 	msg := amqp091.Publishing{
 		ContentType: "text/plain",
 		Body:        data,
