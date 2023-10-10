@@ -1,3 +1,78 @@
 version: '3'
 
 services:
+  #user
+  user-rpc:
+    build:
+      context: ./
+      dockerfile: service/user/rpc/Dockerfile
+    ports:
+      - "50001:50001"
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - go-cloud
+
+  user-api:
+    build:
+      context: ./
+      dockerfile: service/user/api/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - go-cloud
+
+  #file
+  file-api:
+    build:
+      context: ./
+      dockerfile: service/file/api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - go-cloud
+
+  file-rpc:
+    build:
+      context: ./
+      dockerfile: service/file/rpc/Dockerfile
+    ports:
+      - "9001:9001"
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - go-cloud
+
+  #storage
+  storage-api:
+    build:
+      context: ./
+      dockerfile: service/storage/api/Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - c:\storage-01:/app/storage-01
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - go-cloud
+
+  storage-rpc:
+    build:
+      context: ./
+      dockerfile: service/storage/rpc/Dockerfile
+    ports:
+      - "9000:9000"
+    environment:
+      TZ: Asia/Shanghai
+
+    networks:
+      - go-cloud
+
+networks:
+  go-cloud:
+    driver: bridge

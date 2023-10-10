@@ -41,14 +41,14 @@ mq:
     password: "12345678"
 
 storageRPC:
-    domain: "storageRPC"
-    endpoints: "127.0.0.1:9000"
-    is_remote: 1
+    domain: "storage-rpc"
+    endpoints: "storage-rpc:9000"
+    is_remote: 0
 
 fileRPC:
-    domain: "fileRPC"
-    endpoints: "127.0.0.1:9001"
+    domain: "file-rpc"
+    endpoints: "file-rpc:9001"
 
 userRPC:
-    domain: "userRPC"
-    endpoints: "127.0.0.1:50001"
+    domain: "user-rpc"
+    endpoints: "user-rpc:50001"

@@ -21,7 +21,7 @@ func main() {
 	defer cancel()
 	opt.InitConfig()
 	snowflake.Init(1)
-	local.Init("./test")
+	local.Init("./storage-01")
 	pg.Init(opt.Cfg.Pg.Host, opt.Cfg.Pg.User, opt.Cfg.Pg.Password, opt.Cfg.Pg.DBName, opt.Cfg.Pg.Port)
 	redis.Init(opt.Cfg.Redis.Addr, opt.Cfg.Redis.Password, opt.Cfg.Redis.DB)
 	mq.Init(opt.Cfg.Mq.Addr, opt.Cfg.Mq.Username, opt.Cfg.Mq.Password)

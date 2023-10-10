@@ -11,14 +11,13 @@ import (
 
 func (a *API) preUpload(ctx *fiber.Ctx) error {
 	type preUploadReq struct {
-		UploaderId int64  `json:"uploader_id,required" form:"uploader_id,required"`
-		FileName   string `json:"file_name,required" form:"file_name,required" `
-		Ext        string `json:"ext,required" form:"ext,required"`
-		Path       string `json:"path,required" form:"path,required"`
-		Hash       string `json:"hash,required" form:"hash,required"`
-		Size       int32  `json:"size,required" form:"size,required"`
-		IsPrivate  bool   `json:"is_private" form:"is_private"`
-		Expire     int64  `json:"expire" form:"expire"`
+		FileName  string `json:"file_name,required" form:"file_name,required" `
+		Ext       string `json:"ext,required" form:"ext,required"`
+		Path      string `json:"path,required" form:"path,required"`
+		Hash      string `json:"hash,required" form:"hash,required"`
+		Size      int32  `json:"size,required" form:"size,required"`
+		IsPrivate bool   `json:"is_private" form:"is_private"`
+		Expire    int64  `json:"expire" form:"expire"`
 	}
 	type preUploadResp struct {
 		URL      string `json:"url,omitempty"`
@@ -31,10 +30,14 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(p); err != nil {
 		return response.Resp400(ctx, nil)
 	}
-
+	//获取用户id
+	id, ok := ctx.Locals("userID").(int64)
+	if !ok {
+		return response.Resp400(ctx, "token expire time")
+	}
 	//创建用户信息
 	createFileResp, err := a.fileRPCClient.CreateFile(context.Background(), &file.CreateFileReq{
-		UserId:    p.UploaderId,
+		UserId:    id,
 		Path:      p.Path,
 		FileName:  p.FileName,
 		Ext:       p.Ext,

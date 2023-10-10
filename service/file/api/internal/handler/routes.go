@@ -60,10 +60,10 @@ func (a *API) registerAPI() *fiber.App {
 
 	api := app.Group("/file")
 
-	api.Post("/", a.preUpload)
-	api.Post("/update", a.updateFile)
 	api.Use(token.JWTMiddleware())
 	{
+		api.Post("/", a.preUpload)
+		api.Post("/update", a.updateFile)
 		api.Get("/", a.getAllFile)
 		api.Get("/:id", a.preDownload)
 	}

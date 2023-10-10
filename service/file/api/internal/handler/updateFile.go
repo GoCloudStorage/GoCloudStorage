@@ -10,13 +10,13 @@ import (
 
 func (a *API) updateFile(ctx *fiber.Ctx) error {
 	type updateFile struct {
-		FileId     int64  `json:"file_id,required" form:"file_id,required"`
-		UploaderId int64  `json:"uploader_id,required" form:"uploader_id,required"`
-		FileName   string `json:"file_name" form:"file_name" `
-		Ext        string `json:"ext" form:"ext"`
-		Path       string `json:"path" form:"path"`
-		IsPrivate  bool   `json:"is_private" form:"is_private"`
-		StorageId  int64  `json:"storage_id" form:"storage_id"`
+		FileId int64 `json:"file_id,required" form:"file_id,required"`
+
+		FileName  string `json:"file_name" form:"file_name" `
+		Ext       string `json:"ext" form:"ext"`
+		Path      string `json:"path" form:"path"`
+		IsPrivate bool   `json:"is_private" form:"is_private"`
+		StorageId int64  `json:"storage_id" form:"storage_id"`
 	}
 
 	info := new(updateFile)
@@ -25,9 +25,15 @@ func (a *API) updateFile(ctx *fiber.Ctx) error {
 		return response.Resp400(ctx, nil)
 	}
 
+	//获取用户id
+	id, ok := ctx.Locals("userID").(int64)
+	if !ok {
+		return response.Resp400(ctx, "token expire time")
+	}
+
 	_, err = a.fileRPCClient.UpdateFile(context.Background(), &file.UpdateFileReq{
 		FileId:    info.FileId,
-		UserId:    info.UploaderId,
+		UserId:    id,
 		StorageId: info.StorageId,
 		FileName:  info.FileName,
 		Ext:       info.Ext,
