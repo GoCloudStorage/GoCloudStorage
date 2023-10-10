@@ -53,5 +53,8 @@ func (u *UserServiceServer) UserLogin(ctx context.Context, req *user.LoginReques
 		return resp, err
 	}
 	resp.Token = userToken
+	resp.Username = usr.UserName
+	resp.Email = usr.Email
+	resp.Phone = usr.PhoneNumber
 	return
 }

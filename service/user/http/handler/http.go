@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -71,7 +71,10 @@ func (a *API) UserLogin(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 	return response.Resp200(ctx, fiber.Map{
-		"token": resp.Token,
-		"msg":   "登录成功",
+		"username": resp.GetUsername(),
+		"phone":    resp.GetPhone(),
+		"email":    resp.GetEmail(),
+		"token":    resp.GetToken(),
+		"msg":      "登录成功",
 	})
 }

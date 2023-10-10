@@ -22,6 +22,7 @@ func (a *API) download(c *fiber.Ctx) error {
 	} else {
 		downloadToken, err = token.ParseDownloadToken(t)
 		if err != nil {
+			logrus.Error("verify token failed: ", err)
 			return response.Resp400(c, nil)
 		}
 	}

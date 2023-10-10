@@ -2,6 +2,7 @@ package token
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -19,6 +20,7 @@ type DownloadToken struct {
 func GenerateDownloadToken(storageID uint64, filename, ext string, expire time.Duration) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(expire)
+	logrus.Info(expireTime)
 	issuer := issuer
 	claims := DownloadToken{
 		StorageID: storageID,
