@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/file"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
@@ -31,13 +32,14 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 		return response.Resp400(ctx, nil)
 	}
 	//获取用户id
-	id, ok := ctx.Locals("userID").(int64)
+	id, ok := ctx.Locals("userID").(uint)
+	fmt.Println(id)
 	if !ok {
 		return response.Resp400(ctx, "token expire time")
 	}
 	//创建用户信息
 	createFileResp, err := a.fileRPCClient.CreateFile(context.Background(), &file.CreateFileReq{
-		UserId:    id,
+		UserId:    int64(id),
 		Path:      p.Path,
 		FileName:  p.FileName,
 		Ext:       p.Ext,
