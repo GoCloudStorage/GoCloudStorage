@@ -21,6 +21,9 @@ message LoginRequest{
 
 message UserDetailResponse{
   string token = 1;
+  string username = 2;
+  string email = 3;
+  string phone = 4;
 }
 
 message VerifyAccountReq {
@@ -31,7 +34,7 @@ message VerifyAccountResp {
   uint64 userID = 1;
   string username = 2;
   string email = 3;
-  string photo = 4;
+  string phone = 4;
   string phoneNumber = 5;
 }
 

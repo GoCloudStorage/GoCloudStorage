@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/GoCloudstorage/GoCloudstorage/opt"
-	"github.com/GoCloudstorage/GoCloudstorage/pb/user/user"
+	"github.com/GoCloudstorage/GoCloudstorage/pb/user"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

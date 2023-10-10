@@ -9,6 +9,7 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/token"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/xrpc"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -59,7 +60,7 @@ func (a *API) registerAPI() *fiber.App {
 	app := fiber.New()
 
 	api := app.Group("/file")
-
+	api.Use(cors.New())
 	api.Use(token.JWTMiddleware())
 	{
 		api.Post("/", a.preUpload)

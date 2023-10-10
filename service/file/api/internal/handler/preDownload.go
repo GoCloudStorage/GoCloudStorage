@@ -6,7 +6,6 @@ import (
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
 	"github.com/GoCloudstorage/GoCloudstorage/service/file/model"
 	"github.com/gofiber/fiber/v2"
-	"time"
 )
 
 func (a *API) preDownload(c *fiber.Ctx) error {
@@ -37,7 +36,7 @@ func (a *API) preDownload(c *fiber.Ctx) error {
 	// 生成下载链接, 调用storage server
 	req := storage.GetDownloadURLReq{
 		Hash:     fileInfo.Hash,
-		Expire:   int64(time.Hour * 12),
+		Expire:   30,
 		Filename: fileInfo.FileName,
 		Ext:      fileInfo.Ext,
 	}
