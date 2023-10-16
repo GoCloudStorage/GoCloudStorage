@@ -8,17 +8,18 @@ import (
 const issuer = "duryun"
 
 type UploadToken struct {
-	Key string
+	Key  string
+	Size int32
 	jwt.StandardClaims
 }
 
-func GenerateUploadToken(key string, expire time.Duration) (string, error) {
+func GenerateUploadToken(key string, size int32, expire time.Duration) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(expire)
 	issuer := issuer
 	claims := UploadToken{
-		Key: key,
-
+		Key:  key,
+		Size: size,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    issuer,

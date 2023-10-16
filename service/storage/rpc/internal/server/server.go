@@ -88,17 +88,12 @@ func (s StorageServer) GetDownloadURL(ctx context.Context, req *storage.GetDownl
 }
 
 func (s StorageServer) GetUploadURL(ctx context.Context, req *storage.GetUploadURLReq) (*storage.GetUploadURLResp, error) {
-	var (
-		storageInfo model.StorageInfo
-	)
-	expire := time.Minute * 30
-	if storageInfo.IsExistByKey(req.Hash) {
-		return &storage.GetUploadURLResp{}, errors.New(response.RPC_PARAM_ERROR)
-	}
+	expire := time.Minute * 10
+
 	if req.Expire != 0 {
 		expire = time.Second * time.Duration(req.Expire)
 	}
-	uploadToken, err := token.GenerateUploadToken(req.Hash, expire)
+	uploadToken, err := token.GenerateUploadToken(req.Hash, req.Size, expire)
 	if err != nil {
 		return nil, errors.New(response.RPC_PARAM_ERROR)
 	}

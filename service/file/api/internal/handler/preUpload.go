@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"fmt"
+	"github.com/GoCloudstorage/GoCloudstorage/opt"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/file"
 	"github.com/GoCloudstorage/GoCloudstorage/pb/storage"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/response"
@@ -21,19 +21,20 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 		Expire    int64  `json:"expire" form:"expire"`
 	}
 	type preUploadResp struct {
-		URL      string `json:"url,omitempty"`
-		ChunkNum int32  `json:"chunk_num,omitempty"`
-		FileId   int32  `json:"file_id"`
+		URL       string `json:"url,omitempty"`
+		ChunksNum int32  `json:"chunks_num,omitempty"`
+		ChunkSize int32  `json:"chunk_size,omitempty"`
+		FileId    int32  `json:"file_id"`
 	}
 
 	p := new(preUploadReq)
 
 	if err := ctx.BodyParser(p); err != nil {
+		logrus.Error("parse body err:", err)
 		return response.Resp400(ctx, nil)
 	}
 	//获取用户id
 	id, ok := ctx.Locals("userID").(uint)
-	fmt.Println(id)
 	if !ok {
 		return response.Resp400(ctx, "token expire time")
 	}
@@ -57,15 +58,16 @@ func (a *API) preUpload(ctx *fiber.Ctx) error {
 	resp, err := a.storageRPCClient.GetUploadURL(context.Background(), &storage.GetUploadURLReq{
 		Hash:   p.Hash,
 		Expire: p.Expire,
-		Size:   0,
+		Size:   p.Size,
 	})
 	if err != nil {
 		logrus.Error("storageRPCClient.GetUploadURL err:", err)
 		return response.Resp500(ctx, nil)
 	}
 	return response.Resp200(ctx, preUploadResp{
-		URL:      resp.Url,
-		ChunkNum: resp.ChunkNum,
-		FileId:   createFileResp.FileId,
+		URL:       resp.Url,
+		ChunksNum: resp.ChunkNum,
+		ChunkSize: opt.Cfg.Storage.BlockSize,
+		FileId:    createFileResp.FileId,
 	})
 }

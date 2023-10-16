@@ -22,6 +22,7 @@ type storage struct {
 	BlockSize       int32  `mapstructure:"block_size"`
 	UseSSL          bool   `mapstructure:"use_ssl"`
 	BucketName      string `mapstructure:"bucket_name"`
+	RealPath        string `mapstructure:"real_path"`
 }
 
 type pg struct {
@@ -30,10 +31,6 @@ type pg struct {
 	User     string `mapstructure:"user"`
 	Password string `mapstructure:"password"`
 	DBName   string `mapstructure:"db_name"`
-}
-
-type file struct {
-	BlockSize int `mapstructure:"block_size"`
 }
 
 type redis struct {
@@ -73,7 +70,6 @@ type config struct {
 	LogLevel       string     `mapstructure:"log_level"`
 	Storage        storage    `mapstructure:"storage"`
 	Pg             pg         `mapstructure:"pg"`
-	File           file       `mapstructure:"file"`
 	Redis          redis      `mapstructure:"redis"`
 	StorageRPC     storageRPC `mapstructure:"storageRPC"`
 	FileRPC        fileRPC    `mapstructure:"FileRPC"`

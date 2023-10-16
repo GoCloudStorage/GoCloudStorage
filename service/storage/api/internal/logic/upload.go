@@ -16,17 +16,19 @@ import (
 
 type UploadReq struct {
 	ContentRange ContentRange
-	TotalSize    int
-
-	Key         string
-	ChunkNumber int
+	Key          string
+	ChunkNumber  int
+	ChunksNumber int
 }
 
 type ContentRange struct {
 	Start int
 	End   int
 	Total int
-	start int64
+}
+
+func getUploadChunkSizeKey(key string, chunk int) string {
+	return fmt.Sprintf("storage:upload:%s:chunk:%d:size", key, chunk)
 }
 
 func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, error) {
@@ -49,7 +51,7 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 	if !find {
 		object = model.StorageInfo{
 			Hash: uploadReq.Key,
-			Size: uploadReq.TotalSize,
+			Size: 0,
 		}
 		if err = object.CreateStorage(); err != nil {
 			logrus.Errorf("failed create object record, err: %v", err)
@@ -57,9 +59,9 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 		}
 	}
 
-	// 保存数据，并将大小存储在redis中
-	sizeKey := getUploadSizeKey(object.Hash)
-	s, err := redis.Get(context.Background(), sizeKey)
+	// 保存数据，并将块大小存储在redis中
+	chunkSizeKey := getUploadChunkSizeKey(uploadReq.Key, uploadReq.ChunkNumber)
+	s, err := redis.Get(context.Background(), chunkSizeKey)
 	if err != nil && err != redis.Nil {
 		logrus.Error("redis get size err:", err)
 		return nil, err
@@ -72,13 +74,13 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 		logrus.Error("strconv.Atoi err：", err)
 		return nil, err
 	}
-
+	object.Size = size
 	//文件长度
 	lenth := f.Len()
 
-	//文件已经完整了,直接返回
-	if size >= uploadReq.TotalSize {
-		return &model.StorageInfo{}, nil
+	//该块已经完成了，直接返回
+	if size == uploadReq.ContentRange.Total {
+		return &object, nil
 	}
 
 	//保存
@@ -86,12 +88,18 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 		logrus.Errorf("failed save local, err: %v", err)
 		return nil, err
 	}
-	redis.SetEx(context.Background(), sizeKey, size+lenth, time.Minute*30)
+	//上传完成
+	redis.SetEx(context.Background(), chunkSizeKey, size+lenth, time.Minute*30)
 	object.Size = size + lenth
+
+	//该块全部上传，记录完成的快号
+	if object.Size == uploadReq.ContentRange.Total {
+		redis.Client.SAdd(context.Background(), getUploadFinishChunkKey(uploadReq.Key), uploadReq.ChunkNumber)
+	}
 
 	return &object, err
 }
 
-func getUploadSizeKey(key string) string {
-	return fmt.Sprintf("storage:upload:%s:size", key)
+func getUploadFinishChunkKey(key string) string {
+	return fmt.Sprintf("storage:upload:%s:chunck", key)
 }

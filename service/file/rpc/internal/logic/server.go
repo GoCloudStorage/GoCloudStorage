@@ -68,17 +68,25 @@ func (s *FileServer) CreateFile(ctx context.Context, in *file.CreateFileReq) (*f
 		StorageId:  uint64(in.StorageId),
 		IsPrivate:  false,
 	}
-	err := f.Create()
-	err = f.FindOneByHash()
+
+	err, isExit := f.FindOneByHash()
 	if err != nil {
 		logrus.Error("find file err:", err)
 		return nil, errors.New(response.RPC_DB_ERROR)
 	}
+	if isExit {
+		return &file.CreateFileResp{FileId: int32(f.ID)}, nil
+	}
+	err = f.Create()
 	if err != nil {
 		logrus.Error("CreateFile err:", err)
 		return nil, errors.New(response.RPC_DB_ERROR)
 	}
-
+	err, isExit = f.FindOneByHash()
+	if err != nil {
+		logrus.Error("find file err:", err)
+		return nil, errors.New(response.RPC_DB_ERROR)
+	}
 	return &file.CreateFileResp{FileId: int32(f.ID)}, nil
 }
 

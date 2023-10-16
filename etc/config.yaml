@@ -16,18 +16,16 @@ storage:
     endpoint: "162.14.115.114:9000"
     access_key_id: "test-minio"
     secret_access_key: "12345678"
-    block_size: 5
+    block_size: 102400
     use_ssl: false
     bucket_name: "test"
+    real_path: "./storage-01"
 pg:
     host: "162.14.115.114"
     port: 5432
     user: "cill"
     password: "12345678"
     db_name: "test"
-
-file:
-    block_size: 5
 
 redis:
     addr: "162.14.115.114:6379"

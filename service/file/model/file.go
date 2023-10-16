@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"github.com/GoCloudstorage/GoCloudstorage/pkg/db/pg"
 	"gorm.io/gorm"
 )
@@ -21,8 +22,12 @@ func (f *FileInfo) Create() error {
 	return pg.Client.Create(f).Error
 }
 
-func (f *FileInfo) FindOneByHash() error {
-	return pg.Client.Model(f).Where("hash = ?", f.Hash).First(f).Error
+func (f *FileInfo) FindOneByHash() (error, bool) {
+	err := pg.Client.Model(f).Where("hash = ?", f.Hash).First(f).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, false
+	}
+	return err, true
 }
 
 func (f *FileInfo) FindOneByID(id uint) error {

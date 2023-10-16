@@ -47,7 +47,7 @@ func parasUploadHeader(c *fiber.Ctx) (*logic.UploadReq, error) {
 	// 获取chunk number
 	cn := c.Get("OSS-Chunk-Number", "")
 	if cn == "" {
-		return nil, errors.New("OSS-Chunk-Number not is nil")
+		return nil, errors.New("OSS-Chunk-Number is not nil")
 	}
 	chunkNumber, err := strconv.Atoi(cn)
 	if err != nil {
@@ -69,24 +69,24 @@ func parasUploadCommonHeader(c *fiber.Ctx) (*logic.UploadReq, error) {
 	}
 
 	// 获取object total Size
-	ocl := c.Get("OSS-Content-Length", "")
+	ocl := c.Get("OSS-Chunks-Number", "")
 	if ocl == "" {
-		return nil, errors.New("OSS-Content-Length not is nil")
+		return nil, errors.New("OSS-Chunks-Number is not nil")
 	}
 	total, err := strconv.Atoi(ocl)
 	if err != nil {
-		return nil, fmt.Errorf("convert OSS-Content-Length fail, err: %v", err)
+		return nil, fmt.Errorf("convert OSS-Chunks-Number fail, err: %v", err)
 	}
 
 	// 获取key
 	key := c.Get("OSS-Key", "")
 	if key == "" {
-		return nil, errors.New("key form not is nil")
+		return nil, errors.New("key form is not nil")
 	}
 
 	return &logic.UploadReq{
 		ContentRange: cr,
-		TotalSize:    total,
+		ChunksNumber: total,
 		Key:          key,
 		ChunkNumber:  0,
 	}, nil

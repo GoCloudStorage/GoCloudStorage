@@ -30,7 +30,8 @@ func (a *API) upload(c *fiber.Ctx) error {
 		uploadToken string
 	)
 	type resp struct {
-		StorageId uint64 `json:"storage_id"`
+		StorageId         uint64 `json:"storage_id"`
+		ChunkFinishedSize int32  `json:"finished_chunk_size"` //该块已完成的字节大小
 	}
 
 	uploadToken = c.Params("token")
@@ -49,6 +50,10 @@ func (a *API) upload(c *fiber.Ctx) error {
 		return response.Resp400(c, nil)
 	}
 
+	if uploadReq.ChunkNumber > uploadReq.ChunksNumber || (parseUploadToken.Size/opt.Cfg.Storage.BlockSize+1 != int32(uploadReq.ChunksNumber)) {
+		return response.Resp400(c, nil)
+	}
+
 	//分布式锁
 	flag := redis.SetLock(context.Background(), getUploadChunkKey(uploadReq.Key), time.Minute*30)
 	if !flag {
@@ -59,7 +64,7 @@ func (a *API) upload(c *fiber.Ctx) error {
 	//验证分块是否已被人上传
 	flag = redis.Client.SIsMember(context.Background(), getUploadFinishChunkKey(uploadReq.Key), uploadReq.ChunkNumber).Val()
 	if flag {
-		return response.Resp200(c, nil)
+		return response.Resp200(c, nil, "该分块已被人上传")
 	}
 
 	//上传
@@ -68,11 +73,9 @@ func (a *API) upload(c *fiber.Ctx) error {
 		return response.Resp500(c, nil)
 	}
 
-	//上传完成
-	redis.Client.SAdd(context.Background(), getUploadChunkKey(uploadReq.Key), uploadReq.ChunkNumber)
-	// 上传到指定大小，合并
-
-	if object.Size == uploadReq.TotalSize {
+	// 所有分块上传完成，合并
+	num := redis.Client.SCard(context.Background(), getUploadFinishChunkKey(uploadReq.Key)).Val()
+	if num == int64(uploadReq.ChunksNumber) {
 		path, err := local.Client.MergeChunk(object.Hash, object.Size)
 		if err != nil {
 			return response.Resp500(c, nil, fmt.Sprintf("merge chunk failed, err: %v", err))
@@ -80,23 +83,26 @@ func (a *API) upload(c *fiber.Ctx) error {
 		object.RealPath = path
 
 		if err = object.UpdateStorage(); err != nil {
-			return response.Resp500(c, nil, fmt.Sprintf("save object record failed, err: %v", err))
+			return response.Resp500(c, nil, fmt.Sprintf("save object record err: %v", err))
 		}
 		//完成上传，通知异步
 		if opt.Cfg.StorageRPC.IsRemote == 1 {
 			marshal, err := json.Marshal(object.StorageId)
 			if err != nil {
 				logrus.Error("异步上传oss marshal storageId err:", err)
-				return response.Resp200(c, resp{StorageId: object.StorageId}, "上传完成，marshal id err")
+				return response.Resp200(c, resp{StorageId: object.StorageId, ChunkFinishedSize: int32(object.Size)}, "上传完成，marshal id err")
 			}
 			err = mq.Publish("", "transfer-task", marshal)
 			if err != nil {
 				logrus.Error("异步上传oss err:", err)
-				return response.Resp200(c, resp{StorageId: object.StorageId}, "上传完成，异步上传失败")
+				return response.Resp200(c, resp{StorageId: object.StorageId, ChunkFinishedSize: int32(object.Size)}, "上传完成，异步上传失败")
 			}
 		}
-		return response.Resp200(c, resp{StorageId: object.StorageId}, "上传完成，合并成功")
-	}
-	return response.Resp200(c, nil)
 
+		return response.Resp200(c, resp{StorageId: object.StorageId, ChunkFinishedSize: int32(object.Size)}, "上传完成，合并成功")
+	}
+	return response.Resp200(c, resp{
+		StorageId:         object.StorageId,
+		ChunkFinishedSize: int32(object.Size),
+	}, "已完成上传")
 }
