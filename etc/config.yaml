@@ -41,7 +41,7 @@ mq:
 storageRPC:
     domain: "storage-rpc"
     endpoints: "storage-rpc:9000"
-    is_remote: 0
+    is_remote: false
 
 fileRPC:
     domain: "file-rpc"

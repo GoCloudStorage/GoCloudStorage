@@ -47,7 +47,7 @@ func copyFileToFile(srcPath, dstPath string) (n int, err error) {
 }
 
 func saveFile(filepath string, data io.Reader, offset int64) error {
-	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
+	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, 0755)
 	defer file.Close()
 	if err != nil {
 		return fmt.Errorf("failed to open file, [file path] : %s, err: %v", filepath, err)

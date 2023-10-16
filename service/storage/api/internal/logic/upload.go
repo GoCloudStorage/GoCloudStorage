@@ -31,25 +31,38 @@ func getUploadChunkSizeKey(key string, chunk int) string {
 	return fmt.Sprintf("storage:upload:%s:chunk:%d:size", key, chunk)
 }
 
+func FindStorageByHash(hash string) (*model.StorageInfo, bool, error) {
+	var storage model.StorageInfo
+	err := storage.FirstByHash(hash)
+	if err != nil {
+		if !errors.Is(gorm.ErrRecordNotFound, err) {
+			logrus.Errorf("failed get object, err: %v", err)
+			return nil, false, err
+		} else { //没找到
+			return nil, false, nil
+		}
+	}
+	//找到了
+	return &storage, true, nil
+
+}
+
 func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, error) {
 	var (
-		object model.StorageInfo
+		object *model.StorageInfo
 		err    error
 		find   bool
 	)
 	// 获取 object record
-	err = object.FirstByHash(uploadReq.Key)
+	object, find, err = FindStorageByHash(uploadReq.Key)
 
-	if err != nil && !errors.Is(gorm.ErrRecordNotFound, err) {
+	if err != nil {
 		logrus.Errorf("failed get object, err: %v", err)
 		return nil, err
 	}
-	if err == nil {
-		find = true
-	}
 	//没找到,创建存储
 	if !find {
-		object = model.StorageInfo{
+		object = &model.StorageInfo{
 			Hash: uploadReq.Key,
 			Size: 0,
 		}
@@ -80,7 +93,7 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 
 	//该块已经完成了，直接返回
 	if size == uploadReq.ContentRange.Total {
-		return &object, nil
+		return object, nil
 	}
 
 	//保存
@@ -92,12 +105,12 @@ func UploadPart(f *bytes.Reader, uploadReq *UploadReq) (*model.StorageInfo, erro
 	redis.SetEx(context.Background(), chunkSizeKey, size+lenth, time.Minute*30)
 	object.Size = size + lenth
 
-	//该块全部上传，记录完成的快号
+	//该块全部上传，记录完成的块号
 	if object.Size == uploadReq.ContentRange.Total {
 		redis.Client.SAdd(context.Background(), getUploadFinishChunkKey(uploadReq.Key), uploadReq.ChunkNumber)
 	}
 
-	return &object, err
+	return object, err
 }
 
 func getUploadFinishChunkKey(key string) string {

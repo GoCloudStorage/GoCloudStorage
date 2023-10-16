@@ -24,6 +24,7 @@ func Init(root string) {
 }
 
 func (c *chunkStorage) SaveChunk(key string, chunkNumber int, data io.Reader, offset int64) error {
+
 	fileDir := path.Join(c.root, key)
 	if err := os.MkdirAll(fileDir, 0755); err != nil {
 		return fmt.Errorf("failed to mkdir, err: %v", err)

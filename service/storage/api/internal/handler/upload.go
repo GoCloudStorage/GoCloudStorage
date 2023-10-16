@@ -64,7 +64,15 @@ func (a *API) upload(c *fiber.Ctx) error {
 	//验证分块是否已被人上传
 	flag = redis.Client.SIsMember(context.Background(), getUploadFinishChunkKey(uploadReq.Key), uploadReq.ChunkNumber).Val()
 	if flag {
-		return response.Resp200(c, nil, "该分块已被人上传")
+		storage, exit, err := logic.FindStorageByHash(uploadReq.Key)
+		if err != nil || !exit {
+			logrus.Error("FindStorageByHash err:", err)
+			return response.Resp500(c, nil)
+		}
+		return response.Resp200(c, resp{
+			StorageId:         storage.StorageId,
+			ChunkFinishedSize: int32(uploadReq.ContentRange.Total),
+		}, "该分块已被人上传")
 	}
 
 	//上传
@@ -76,17 +84,20 @@ func (a *API) upload(c *fiber.Ctx) error {
 	// 所有分块上传完成，合并
 	num := redis.Client.SCard(context.Background(), getUploadFinishChunkKey(uploadReq.Key)).Val()
 	if num == int64(uploadReq.ChunksNumber) {
-		path, err := local.Client.MergeChunk(object.Hash, object.Size)
+		path, err := local.Client.MergeChunk(object.Hash, int(parseUploadToken.Size))
 		if err != nil {
 			return response.Resp500(c, nil, fmt.Sprintf("merge chunk failed, err: %v", err))
 		}
-		object.RealPath = path
 
+		//合并成功，更新storage信息
+		object.RealPath = path
+		object.Size = int(parseUploadToken.Size)
+		object.IsRemote = opt.Cfg.StorageRPC.IsRemote
 		if err = object.UpdateStorage(); err != nil {
 			return response.Resp500(c, nil, fmt.Sprintf("save object record err: %v", err))
 		}
 		//完成上传，通知异步
-		if opt.Cfg.StorageRPC.IsRemote == 1 {
+		if opt.Cfg.StorageRPC.IsRemote {
 			marshal, err := json.Marshal(object.StorageId)
 			if err != nil {
 				logrus.Error("异步上传oss marshal storageId err:", err)

@@ -10,8 +10,7 @@ import (
 
 func (a *API) updateFile(ctx *fiber.Ctx) error {
 	type updateFile struct {
-		FileId int64 `json:"file_id,required" form:"file_id,required"`
-
+		FileId    int64  `json:"file_id,required" form:"file_id,required"`
 		FileName  string `json:"file_name" form:"file_name" `
 		Ext       string `json:"ext" form:"ext"`
 		Path      string `json:"path" form:"path"`
@@ -26,14 +25,14 @@ func (a *API) updateFile(ctx *fiber.Ctx) error {
 	}
 
 	//获取用户id
-	id, ok := ctx.Locals("userID").(int64)
+	id, ok := ctx.Locals("userID").(uint)
 	if !ok {
 		return response.Resp400(ctx, "token expire time")
 	}
 
 	_, err = a.fileRPCClient.UpdateFile(context.Background(), &file.UpdateFileReq{
 		FileId:    info.FileId,
-		UserId:    id,
+		UserId:    int64(id),
 		StorageId: info.StorageId,
 		FileName:  info.FileName,
 		Ext:       info.Ext,

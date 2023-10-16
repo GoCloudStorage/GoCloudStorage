@@ -128,7 +128,7 @@ func (s StorageServer) UploadOSS(ctx context.Context, req *storage.UploadOSSReq)
 }
 
 func (s StorageServer) componentDownloadURL(downloadToken string) string {
-	result, err := url.JoinPath(s.HttpAddr, "/local/download", downloadToken)
+	result, err := url.JoinPath(s.HttpAddr, "/download", downloadToken)
 	if err != nil {
 		logrus.Error(err)
 	}
